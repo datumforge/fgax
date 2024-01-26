@@ -59,7 +59,7 @@ steps:
           download: "results.txt"
       - artifacts#v1.9.2:
           download: "coverage.out"
-          step: "go_test_sqlite"    
+          step: "go_test"    
       - docker#v5.9.0:
             image: "sonarsource/sonar-scanner-cli:5"
             environment:
@@ -70,13 +70,13 @@ steps:
   - label: ":github: upload reports"
     key: "scan-upload"
     if: build.branch == "main"
-    depends_on: ["gosec", "go_test_sqlite"]
+    depends_on: ["gosec", "go_test"]
     plugins:
       - artifacts#v1.9.2:
           download: results.txt
       - artifacts#v1.9.2:
           download: coverage.out
-          step: "go_test_sqlite"
+          step: "go_test"
       - docker#v5.9.0:
             image: "sonarsource/sonar-scanner-cli:5"
             environment:
