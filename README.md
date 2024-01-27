@@ -22,7 +22,7 @@ You can install `entfga` by running the following command:
 go get github.com/datumforge/fgax/entfga@latest
 ```
 
-In addition to installing `entfga``, you need to create two files in your `ent` directory: `entc.go` and `generate.go`.
+In addition to installing `entfga`, you need to create two files in your `ent` directory: `entc.go` and `generate.go`.
 The `entc.go` file should contain the following code:
 
 ```go
