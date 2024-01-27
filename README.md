@@ -12,11 +12,11 @@ Wrappers to interact with the [OpenFGA go-sdk](https://github.com/openfga/go-sdk
 
 ### entfga
 
-Ent extension to create relationship tuples using ent Hooks
+[Ent extension](https://entgo.io/docs/extensions/) to create relationship tuples using [Ent Hooks](https://entgo.io/docs/hooks/)
 
 #### Installation
 
-You can install `entfga`` by running the following command:
+You can install `entfga` by running the following command:
 
 ```shell
 go get github.com/datumforge/fgax/entfga@latest
