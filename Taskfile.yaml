@@ -1,0 +1,45 @@
+version: '3'
+
+tasks:
+  generate:
+    desc: generate the mock fga client
+    cmds:
+      - go generate ./...
+
+  go:lint:
+    desc: runs golangci-lint, the most annoying opinionated linter ever
+    cmds:
+      - golangci-lint run -v
+
+  go:test:
+    desc: runs and outputs results of created go tests
+    cmds:
+      - go test -v ./...
+
+  go:tidy:
+    desc: runs go mod tidy on the backend
+    aliases: [tidy]
+    cmds:
+      - go mod tidy
+
+  go:all:
+    aliases: [go]
+    desc: runs all go test and lint related tasks
+    cmds:
+      - task: go:tidy
+      - task: go:lint
+      - task: go:test
+
+  ci:
+    desc: a task that runs during CI
+    cmds:
+      - task: generate
+      - "git config --global --add safe.directory /workdir"
+      - |
+        status=$(git status --porcelain)
+        if [ -n "$status" ]; then
+        echo "detected git diff after running generate; please re-run tasks"
+        echo "$status"
+        exit 1
+        fi
+  
