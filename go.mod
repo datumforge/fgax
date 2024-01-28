@@ -1,6 +1,6 @@
 module github.com/datumforge/fgax
 
-go 1.21.3
+go 1.21.6
 
 require (
 	github.com/kelseyhightower/envconfig v1.4.0
