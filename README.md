@@ -10,6 +10,14 @@ Go libraries to interact with [OpenFGA](https://openfga.dev/)
 
 Wrappers to interact with the [OpenFGA go-sdk](https://github.com/openfga/go-sdk) and client libraries
 
+#### Installation
+
+You can install `fgax` by running the following command:
+
+```shell
+go get github.com/datumforge/fgax@latest
+```
+
 ### entfga
 
 [Ent extension](https://entgo.io/docs/extensions/) to create relationship tuples using [Ent Hooks](https://entgo.io/docs/hooks/)
@@ -32,7 +40,7 @@ package main
 
 import (
 	"log"
-	"github.com/datumforge/entfga"
+	"github.com/datumforge/fgax/entfga"
 	"entgo.io/ent/entc"
 )
 
