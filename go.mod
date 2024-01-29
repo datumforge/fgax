@@ -6,7 +6,7 @@ require (
 	entgo.io/ent v0.12.5
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/openfga/go-sdk v0.3.4
-	github.com/openfga/language/pkg/go v0.0.0-20240123095931-d4c79707596a
+	github.com/openfga/language/pkg/go v0.0.0-20240129121047-c40760ddde79
 	github.com/pkg/errors v0.9.1
 	github.com/stoewer/go-strcase v1.3.0
 	github.com/stretchr/testify v1.8.4
