@@ -52,8 +52,7 @@ func WithSoftDeletes() ExtensionOption {
 	}
 }
 
-// Templates returns the generated templates which include the client, history query, history from mutation
-// and an optional auditing template
+// Templates returns the generated templates which include the client and authz from mutation
 func (e *AuthzExtension) Templates() []*gen.Template {
 	templates := []*gen.Template{
 		parseTemplate("authzFromMutation", "templates/authzFromMutation.tmpl"),
