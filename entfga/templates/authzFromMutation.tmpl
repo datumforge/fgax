@@ -22,10 +22,7 @@
             role, _ := m.Role()
 
             // get tuple key 
-            tuple, err := fgax.GetTupleKey(userID, "user", objectID, "{{ $objectType | ToLower }}" , role.String())
-            if err != nil {
-                return err
-            }
+            tuple := fgax.GetTupleKey(userID, "user", objectID, "{{ $objectType | ToLower }}" , role.String())
 
             if _, err := m.Authz.WriteTupleKeys(ctx, []fgax.TupleKey{tuple}, nil); err != nil {
                 m.Logger.Errorw("failed to create relationship tuple", "error", err)
@@ -80,17 +77,11 @@
                     return err
                 }
 
-                d, err := fgax.GetTupleKey(member.UserID, "user", member.{{ $objectType | ToUpperCamel }}ID, "{{ $objectType | ToLower }}", oldRole.String())
-                if err != nil {
-                    return err
-                }
+                d := fgax.GetTupleKey(member.UserID, "user", member.{{ $objectType | ToUpperCamel }}ID, "{{ $objectType | ToLower }}", oldRole.String())
 
                 deletes = append(deletes, d)
 
-                w, err := fgax.GetTupleKey(member.UserID, "user", member.{{ $objectType | ToUpperCamel }}ID, "{{ $objectType | ToLower }}", newRole.String())
-                if err != nil {
-                    return err
-                }
+                w := fgax.GetTupleKey(member.UserID, "user", member.{{ $objectType | ToUpperCamel }}ID, "{{ $objectType | ToLower }}", newRole.String())
 
                 writes = append(writes, w)
 
@@ -134,10 +125,7 @@
                     return err
                 }
 
-                t, err := fgax.GetTupleKey(members.UserID, "user", members.{{ $objectType | ToUpperCamel }}ID, "{{ $objectType | ToLower }}", members.Role.String())
-                if err != nil {
-                    return err
-                }
+                t := fgax.GetTupleKey(members.UserID, "user", members.{{ $objectType | ToUpperCamel }}ID, "{{ $objectType | ToLower }}", members.Role.String())
 
                 tuples = append(tuples, t)
             }
