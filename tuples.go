@@ -97,7 +97,7 @@ func tupleKeyToWriteRequest(writes []TupleKey) (w []ofgaclient.ClientTupleKey) {
 		ctk := ofgaclient.ClientTupleKey{}
 		ctk.SetObject(k.Object.String())
 		ctk.SetUser(k.Subject.String())
-		ctk.SetRelation(string(k.Relation))
+		ctk.SetRelation(k.Relation.String())
 
 		w = append(w, ctk)
 	}
@@ -223,7 +223,7 @@ func (c *Client) DeleteAllObjectRelations(ctx context.Context, object string) er
 }
 
 // GetTupleKey creates a Tuple key with the provided subject, object, and role
-func GetTupleKey(subjectID, subjectType, objectID, objectType string, relation string) (TupleKey, error) {
+func GetTupleKey(subjectID, subjectType, objectID, objectType, relation string) TupleKey {
 	sub := Entity{
 		Kind:       Kind(subjectType),
 		Identifier: subjectID,
@@ -238,5 +238,5 @@ func GetTupleKey(subjectID, subjectType, objectID, objectType string, relation s
 		Subject:  sub,
 		Object:   object,
 		Relation: Relation(relation),
-	}, nil
+	}
 }
