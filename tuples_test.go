@@ -4,10 +4,9 @@ import (
 	"context"
 	"testing"
 
+	mock_fga "github.com/datumforge/fgax/mockery"
 	openfga "github.com/openfga/go-sdk"
 	"github.com/stretchr/testify/assert"
-
-	mock_fga "github.com/datumforge/fgax/mockery"
 )
 
 func Test_EntityString(t *testing.T) {
@@ -133,6 +132,26 @@ func Test_tupleKeyToWriteRequest(t *testing.T) {
 					Relation: "member",
 					Object: Entity{
 						Kind:       "organization",
+						Identifier: "IDOFTHEORG",
+					},
+				},
+			},
+			expectedUser:     "user:THEBESTUSER",
+			expectedRelation: "member",
+			expectedObject:   "organization:IDOFTHEORG",
+			expectedCount:    1,
+		},
+		{
+			name: "happy path, should lowercase kind and relations",
+			writes: []TupleKey{
+				{
+					Subject: Entity{
+						Kind:       "USER",
+						Identifier: "THEBESTUSER",
+					},
+					Relation: "MEMBER",
+					Object: Entity{
+						Kind:       "ORGANIZATION",
 						Identifier: "IDOFTHEORG",
 					},
 				},
@@ -402,6 +421,51 @@ func Test_DeleteRelationshipTuple(t *testing.T) {
 			}
 
 			assert.NoError(t, err)
+		})
+	}
+}
+
+func TestGetTupleKey(t *testing.T) {
+	type args struct {
+		subjectID   string
+		subjectType string
+		objectID    string
+		objectType  string
+		relation    string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    TupleKey
+		wantErr bool
+	}{
+		{
+			name: "happy path",
+			args: args{
+				subjectID:   "HIITSME",
+				subjectType: "user",
+				objectType:  "organization",
+				objectID:    "MIDNIGHTSAFTERNOON",
+				relation:    "member",
+			},
+			want: TupleKey{
+				Subject: Entity{
+					Kind:       "user",
+					Identifier: "HIITSME",
+				},
+				Relation: "member",
+				Object: Entity{
+					Kind:       "organization",
+					Identifier: "MIDNIGHTSAFTERNOON",
+				},
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := GetTupleKey(tt.args.subjectID, tt.args.subjectType, tt.args.objectID, tt.args.objectType, tt.args.relation)
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }

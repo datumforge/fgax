@@ -68,6 +68,12 @@ package ent
 
 #### Usage
 
+When creating the `*ent.Client` add the following to enable the authz hooks:
+
+```
+	client.WithAuthz()
+```
+
 In the `ent` schema, provide the following annotation:
 
 ```go 
