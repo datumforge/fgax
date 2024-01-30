@@ -22,12 +22,12 @@
             role, _ := m.Role()
 
             // get tuple key 
-            tuple, err := fga.GetTupleKey(userID, "user", objectID, "{{ $objectType | ToLower }}" , role.String())
+            tuple, err := fgax.GetTupleKey(userID, "user", objectID, "{{ $objectType | ToLower }}" , role.String())
             if err != nil {
                 return err
             }
 
-            if _, err := m.Authz.WriteTupleKeys(ctx, []fga.TupleKey{tuple}, nil); err != nil {
+            if _, err := m.Authz.WriteTupleKeys(ctx, []fgax.TupleKey{tuple}, nil); err != nil {
                 m.Logger.Errorw("failed to create relationship tuple", "error", err)
 
                 return err
@@ -53,8 +53,8 @@
             }
 
             var (
-                writes  []fga.TupleKey
-                deletes []fga.TupleKey
+                writes  []fgax.TupleKey
+                deletes []fgax.TupleKey
             )
 
             oldRole, err := m.OldRole(ctx)
@@ -80,14 +80,14 @@
                     return err
                 }
 
-                d, err := fga.GetTupleKey(member.UserID, "user", member.{{ $objectType | ToUpperCamel }}ID, "{{ $objectType | ToLower }}", oldRole.String())
+                d, err := fgax.GetTupleKey(member.UserID, "user", member.{{ $objectType | ToUpperCamel }}ID, "{{ $objectType | ToLower }}", oldRole.String())
                 if err != nil {
                     return err
                 }
 
                 deletes = append(deletes, d)
 
-                w, err := fga.GetTupleKey(member.UserID, "user", member.{{ $objectType | ToUpperCamel }}ID, "{{ $objectType | ToLower }}", newRole.String())
+                w, err := fgax.GetTupleKey(member.UserID, "user", member.{{ $objectType | ToUpperCamel }}ID, "{{ $objectType | ToLower }}", newRole.String())
                 if err != nil {
                     return err
                 }
@@ -124,7 +124,7 @@
                 return err
             }
 
-            tuples := []fga.TupleKey{}
+            tuples := []fgax.TupleKey{}
 
             // User the IDs of the memberships and delete all related tuples
             for _, id := range ids {
@@ -134,7 +134,7 @@
                     return err
                 }
 
-                t, err := fga.GetTupleKey(members.UserID, "user", members.{{ $objectType | ToUpperCamel }}ID, "{{ $objectType | ToLower }}", members.Role.String())
+                t, err := fgax.GetTupleKey(members.UserID, "user", members.{{ $objectType | ToUpperCamel }}ID, "{{ $objectType | ToLower }}", members.Role.String())
                 if err != nil {
                     return err
                 }
