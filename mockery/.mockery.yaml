@@ -1,0 +1,5 @@
+with-expecter: true
+dir: .
+all: true
+packages:
+    github.com/openfga/go-sdk/client:
