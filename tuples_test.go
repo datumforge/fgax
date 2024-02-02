@@ -257,6 +257,26 @@ func Test_tupleKeyToDeleteRequest(t *testing.T) {
 			expectedCount:    1,
 		},
 		{
+			name: "happy path, uppercase",
+			writes: []TupleKey{
+				{
+					Subject: Entity{
+						Kind:       "USER",
+						Identifier: "THEBESTUSER",
+					},
+					Relation: "MEMBER",
+					Object: Entity{
+						Kind:       "ORGANIZATION",
+						Identifier: "IDOFTHEORG",
+					},
+				},
+			},
+			expectedUser:     "user:THEBESTUSER",
+			expectedRelation: "member",
+			expectedObject:   "organization:IDOFTHEORG",
+			expectedCount:    1,
+		},
+		{
 			name: "happy path, group",
 			writes: []TupleKey{
 				{
