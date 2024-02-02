@@ -111,7 +111,7 @@ func tupleKeyToDeleteRequest(deletes []TupleKey) (d []openfga.TupleKeyWithoutCon
 		ctk := openfga.TupleKeyWithoutCondition{}
 		ctk.SetObject(k.Object.String())
 		ctk.SetUser(k.Subject.String())
-		ctk.SetRelation(string(k.Relation))
+		ctk.SetRelation(k.Relation.String())
 
 		d = append(d, ctk)
 	}
