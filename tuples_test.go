@@ -4,9 +4,10 @@ import (
 	"context"
 	"testing"
 
-	mock_fga "github.com/datumforge/fgax/mockery"
 	openfga "github.com/openfga/go-sdk"
 	"github.com/stretchr/testify/assert"
+
+	mock_fga "github.com/datumforge/fgax/mockery"
 )
 
 func Test_EntityString(t *testing.T) {
@@ -453,6 +454,7 @@ func TestGetTupleKey(t *testing.T) {
 		objectType  string
 		relation    string
 	}
+
 	tests := []struct {
 		name    string
 		args    args
