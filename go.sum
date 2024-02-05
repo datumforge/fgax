@@ -55,8 +55,8 @@ github.com/openfga/api/proto v0.0.0-20240201160513-05de9d8be3ee h1:ZqeLB0dxo4XgR
 github.com/openfga/api/proto v0.0.0-20240201160513-05de9d8be3ee/go.mod h1:XF/4W9je/FGBZQ2M5pbQnrzdKF4VcEEtds3ole9sW5E=
 github.com/openfga/go-sdk v0.3.4 h1:5VsDSmkXUP/XH9L4BtztYVPuthH5Pd3h1QZfqzZttL0=
 github.com/openfga/go-sdk v0.3.4/go.mod h1:u1iErzj5E9/bhe+8nsMv0gigcYbJtImcdgcE5DmpbBg=
-github.com/openfga/language/pkg/go v0.0.0-20240202014326-1758dfa8dc1b h1:Frs+GPzj5lWfOzV/jhaYIz2BZ8n8By5iRgTpBNjQvQA=
-github.com/openfga/language/pkg/go v0.0.0-20240202014326-1758dfa8dc1b/go.mod h1:m4eSYdyRWv6mu5mBFAfUdK4J6WJkHnlhMHI1k0621qM=
+github.com/openfga/language/pkg/go v0.0.0-20240205122832-cf938f8254bd h1:W7Oa32FZPfy3B6IOwm1a6j24hSMwsQkXTaVZIUHTJ/M=
+github.com/openfga/language/pkg/go v0.0.0-20240205122832-cf938f8254bd/go.mod h1:m4eSYdyRWv6mu5mBFAfUdK4J6WJkHnlhMHI1k0621qM=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
