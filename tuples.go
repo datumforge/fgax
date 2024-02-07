@@ -192,10 +192,16 @@ func (c *Client) DeleteAllObjectRelations(ctx context.Context, object string) er
 		return newInvalidEntityError(object)
 	}
 
-	// TODO: update page size for pagination
-	opts := ofgaclient.ClientReadOptions{}
+	var pagesize int32 = 50
 
-	resp, err := c.Ofga.Read(ctx).Options(opts).Execute()
+	var contTok *string = nil
+
+	resp, err := c.Ofga.Read(ctx).Options(ofgaclient.ClientReadOptions{
+		PageSize:          &pagesize,
+		ContinuationToken: contTok,
+	}).Body(ofgaclient.ClientReadRequest{
+		Object: &object,
+	}).Execute()
 	if err != nil {
 		c.Logger.Errorw("error deleting relationship tuples", "error", err.Error())
 
