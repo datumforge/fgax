@@ -10,7 +10,7 @@ steps:
     key: "generate"
     plugins:
       - docker#v5.10.0:
-          image: "ghcr.io/datumforge/base-ci-image:v1.0.3"
+          image: "ghcr.io/datumforge/base-ci-image:14-2702e70f"
           command: ["task", "ci"]
           environment: 
             - "GOTOOLCHAIN=auto"
@@ -31,7 +31,7 @@ steps:
     key: "go_test"
     plugins:
       - docker#v5.10.0:
-          image: golang:1.21.6
+          image: golang:1.22.0
           command: ["go", "test", "-coverprofile=coverage.out","./..."]
     artifact_paths: ["coverage.out"]
 
