@@ -3,7 +3,7 @@ module github.com/datumforge/fgax
 go 1.21.6
 
 require (
-	entgo.io/ent v0.12.5
+	entgo.io/ent v0.13.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/openfga/go-sdk v0.3.4
 	github.com/openfga/language/pkg/go v0.0.0-20240205122832-cf938f8254bd
@@ -15,7 +15,7 @@ require (
 )
 
 require (
-	ariga.io/atlas v0.16.0 // indirect
+	ariga.io/atlas v0.19.1-0.20240203083654-5948b60a8e43 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.0 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
