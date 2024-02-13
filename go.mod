@@ -5,7 +5,7 @@ go 1.22.0
 require (
 	entgo.io/ent v0.13.0
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/openfga/go-sdk v0.3.4
+	github.com/openfga/go-sdk v0.3.5
 	github.com/openfga/language/pkg/go v0.0.0-20240212143105-d904eadb4291
 	github.com/pkg/errors v0.9.1
 	github.com/stoewer/go-strcase v1.3.0
