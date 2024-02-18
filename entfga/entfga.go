@@ -56,6 +56,7 @@ func WithSoftDeletes() ExtensionOption {
 func (e *AuthzExtension) Templates() []*gen.Template {
 	templates := []*gen.Template{
 		parseTemplate("authzFromMutation", "templates/authzFromMutation.tmpl"),
+		parseTemplate("authzChecks", "templates/authzChecks.tmpl"),
 		parseTemplate("client", "templates/client.tmpl"),
 	}
 

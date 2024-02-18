@@ -12,137 +12,152 @@
     {{ range $n := $.Nodes }}
     {{ $name := $n.Name }}
         {{ $mutator := $n.MutationName }}
-        {{/* Only include nodes with the Autz anntoation. See: Annotation.Name */}}
+        {{/* Only include nodes with the Authz anntoation. See: Annotation.Name */}}
         {{ if $n.Annotations.Authz }}
-        {{ $objectType := extractObjectType $n.Annotations.Authz.ObjectType }}
-        func (m *{{ $mutator }}) CreateTuplesFromCreate(ctx context.Context) error {
-            // Get fields for tuple creation
-            userID, _ := m.UserID()
-            objectID, _ := m.{{ $objectType | ToUpperCamel }}ID()
-            role, _ := m.Role()
 
-            // get tuple key 
-            tuple := fgax.GetTupleKey(userID, "user", objectID, "{{ $objectType | ToLower }}" , role.String())
+            {{ $objectType := extractObjectType $n.Annotations.Authz.ObjectType }}
+            func (m *{{ $mutator }}) CreateTuplesFromCreate(ctx context.Context) error {
+                {{ $includeHooks := extractIncludeHooks $n.Annotations.Authz.IncludeHooks }}
+                {{ if $includeHooks}}
 
-            if _, err := m.Authz.WriteTupleKeys(ctx, []fgax.TupleKey{tuple}, nil); err != nil {
-                m.Logger.Errorw("failed to create relationship tuple", "error", err)
+                // Get fields for tuple creation
+                userID, _ := m.UserID()
+                objectID, _ := m.{{ $objectType | ToUpperCamel }}ID()
+                role, _ := m.Role()
 
-                return err
-            }
+                // get tuple key 
+                tuple := fgax.GetTupleKey(userID, "user", objectID, "{{ $objectType | ToLower }}" , role.String())
 
-            m.Logger.Debugw("created relationship tuples", "relation", role, "object", tuple.Object)
+                if _, err := m.Authz.WriteTupleKeys(ctx, []fgax.TupleKey{tuple}, nil); err != nil {
+                    m.Logger.Errorw("failed to create relationship tuple", "error", err)
 
-            return nil
-        }
+                    return err
+                }
 
-        func (m *{{ $mutator }}) CreateTuplesFromUpdate(ctx context.Context) error {
-            {{- if $softDeletes }}
-            // check for soft delete operation and delete instead
-            if entx.CheckIsSoftDelete(ctx) {
-                return m.CreateTuplesFromDelete(ctx)
-            }
-            {{- end }}
+                m.Logger.Debugw("created relationship tuples", "relation", role, "object", tuple.Object)
 
-            // get ids that will be updated
-            ids, err := m.IDs(ctx)
-            if err != nil {
-                return err
-            }
-
-            var (
-                writes  []fgax.TupleKey
-                deletes []fgax.TupleKey
-            )
-
-            oldRole, err := m.OldRole(ctx)
-            if err != nil {
-                return err
-            }
-
-            newRole, exists := m.Role()
-            if !exists {
-                return entfga.ErrMissingRole
-            }
-
-            if oldRole == newRole {
-                m.Logger.Debugw("nothing to update, roles are the same", "old_role", oldRole, "new_role", newRole)
+                {{ end }}
 
                 return nil
             }
 
-            // User the IDs of the memberships and delete all related tuples
-            for _, id := range ids {
-                member, err := m.Client().{{ $name }}.Get(ctx, id)
+            func (m *{{ $mutator }}) CreateTuplesFromUpdate(ctx context.Context) error {
+                {{ $includeHooks := extractIncludeHooks $n.Annotations.Authz.IncludeHooks }}
+                {{ if $includeHooks}}
+
+                {{- if $softDeletes }}
+                // check for soft delete operation and delete instead
+                if entx.CheckIsSoftDelete(ctx) {
+                    return m.CreateTuplesFromDelete(ctx)
+                }
+                {{- end }}
+
+                // get ids that will be updated
+                ids, err := m.IDs(ctx)
                 if err != nil {
                     return err
                 }
 
-                d := fgax.GetTupleKey(member.UserID, "user", member.{{ $objectType | ToUpperCamel }}ID, "{{ $objectType | ToLower }}", oldRole.String())
+                var (
+                    writes  []fgax.TupleKey
+                    deletes []fgax.TupleKey
+                )
 
-                deletes = append(deletes, d)
+                oldRole, err := m.OldRole(ctx)
+                if err != nil {
+                    return err
+                }
 
-                w := fgax.GetTupleKey(member.UserID, "user", member.{{ $objectType | ToUpperCamel }}ID, "{{ $objectType | ToLower }}", newRole.String())
+                newRole, exists := m.Role()
+                if !exists {
+                    return entfga.ErrMissingRole
+                }
 
-                writes = append(writes, w)
-
-                if len(writes) == 0 && len(deletes) == 0 {
-                    m.Logger.Debugw("no relationships to create or delete")
+                if oldRole == newRole {
+                    m.Logger.Debugw("nothing to update, roles are the same", "old_role", oldRole, "new_role", newRole)
 
                     return nil
                 }
 
-                if _, err := m.Authz.WriteTupleKeys(ctx, writes, deletes); err != nil {
-                    m.Logger.Errorw("failed to update relationship tuple", "error", err)
+                // User the IDs of the memberships and delete all related tuples
+                for _, id := range ids {
+                    member, err := m.Client().{{ $name }}.Get(ctx, id)
+                    if err != nil {
+                        return err
+                    }
 
-                    return err
+                    d := fgax.GetTupleKey(member.UserID, "user", member.{{ $objectType | ToUpperCamel }}ID, "{{ $objectType | ToLower }}", oldRole.String())
+
+                    deletes = append(deletes, d)
+
+                    w := fgax.GetTupleKey(member.UserID, "user", member.{{ $objectType | ToUpperCamel }}ID, "{{ $objectType | ToLower }}", newRole.String())
+
+                    writes = append(writes, w)
+
+                    if len(writes) == 0 && len(deletes) == 0 {
+                        m.Logger.Debugw("no relationships to create or delete")
+
+                        return nil
+                    }
+
+                    if _, err := m.Authz.WriteTupleKeys(ctx, writes, deletes); err != nil {
+                        m.Logger.Errorw("failed to update relationship tuple", "error", err)
+
+                        return err
+                    }
                 }
+
+                {{ end }}
+
+                return nil
             }
 
-            return nil
-        }
+            func (m *{{ $mutator }}) CreateTuplesFromDelete(ctx context.Context) error {
+                {{ $includeHooks := extractIncludeHooks $n.Annotations.Authz.IncludeHooks }}
+                {{ if $includeHooks}}
 
-        func (m *{{ $mutator }}) CreateTuplesFromDelete(ctx context.Context) error {
-            {{- if $softDeletes }}
-            // check for soft delete operation and skip so it happens on update
-            if entx.CheckIsSoftDelete(ctx) {
-                return nil 
-            }
-            {{- end }} 
+                {{- if $softDeletes }}
+                // check for soft delete operation and skip so it happens on update
+                if entx.CheckIsSoftDelete(ctx) {
+                    return nil 
+                }
+                {{- end }} 
 
-            // get ids that will be deleted
-            ids, err := m.IDs(ctx)
-            if err != nil {
-                return err
-            }
-
-            tuples := []fgax.TupleKey{}
-
-            // User the IDs of the memberships and delete all related tuples
-            for _, id := range ids {
-                // this wont work with soft deletes
-                members, err := m.Client().{{ $name }}.Get(ctx, id)
+                // get ids that will be deleted
+                ids, err := m.IDs(ctx)
                 if err != nil {
                     return err
                 }
 
-                t := fgax.GetTupleKey(members.UserID, "user", members.{{ $objectType | ToUpperCamel }}ID, "{{ $objectType | ToLower }}", members.Role.String())
+                tuples := []fgax.TupleKey{}
 
-                tuples = append(tuples, t)
-            }
+                // User the IDs of the memberships and delete all related tuples
+                for _, id := range ids {
+                    // this wont work with soft deletes
+                    members, err := m.Client().{{ $name }}.Get(ctx, id)
+                    if err != nil {
+                        return err
+                    }
 
-            if len(tuples) > 0 {
-                if _, err := m.Authz.WriteTupleKeys(ctx, nil, tuples); err != nil {
-                    m.Logger.Errorw("failed to delete relationship tuple", "error", err)
+                    t := fgax.GetTupleKey(members.UserID, "user", members.{{ $objectType | ToUpperCamel }}ID, "{{ $objectType | ToLower }}", members.Role.String())
 
-                    return err
+                    tuples = append(tuples, t)
                 }
 
-                m.Logger.Debugw("deleted relationship tuples")
+                if len(tuples) > 0 {
+                    if _, err := m.Authz.WriteTupleKeys(ctx, nil, tuples); err != nil {
+                        m.Logger.Errorw("failed to delete relationship tuple", "error", err)
+
+                        return err
+                    }
+
+                    m.Logger.Debugw("deleted relationship tuples")
+                }
+
+                {{ end }}
+
+                return nil
             }
-
-
-            return nil
-        }
     {{ end }}
     {{ end }}
 {{ end }}
