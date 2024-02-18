@@ -10,7 +10,7 @@ import (
 	mock_fga "github.com/datumforge/fgax/mockery"
 )
 
-func Test_CheckTuple(t *testing.T) {
+func TestCheckTuple(t *testing.T) {
 	testCases := []struct {
 		name        string
 		relation    string
@@ -55,6 +55,91 @@ func Test_CheckTuple(t *testing.T) {
 			if tc.errRes != "" {
 				assert.Error(t, err)
 				assert.ErrorContains(t, err, tc.errRes)
+				assert.Equal(t, tc.expectedRes, valid)
+
+				return
+			}
+
+			assert.NoError(t, err)
+			assert.Equal(t, tc.expectedRes, valid)
+		})
+	}
+}
+
+func TestCheckAccess(t *testing.T) {
+	tests := []struct {
+		name        string
+		ac          AccessCheck
+		expectedRes bool
+		wantErr     bool
+	}{
+		{
+			name: "happy path, valid access",
+			ac: AccessCheck{
+				ObjectType: "organization",
+				ObjectID:   "ulid-of-org",
+				Relation:   "member",
+				UserID:     "ulid-of-member",
+			},
+			expectedRes: true,
+			wantErr:     false,
+		},
+		{
+			name: "missing object type",
+			ac: AccessCheck{
+				ObjectID: "ulid-of-org",
+				Relation: "member",
+				UserID:   "ulid-of-member",
+			},
+			expectedRes: false,
+			wantErr:     true,
+		},
+		{
+			name: "missing relation",
+			ac: AccessCheck{
+				ObjectType: "organization",
+				ObjectID:   "ulid-of-org",
+				UserID:     "ulid-of-member",
+			},
+			expectedRes: false,
+			wantErr:     true,
+		},
+		{
+			name: "missing object type",
+			ac: AccessCheck{
+				Relation: "member",
+				ObjectID: "ulid-of-org",
+				UserID:   "ulid-of-member",
+			},
+			expectedRes: false,
+			wantErr:     true,
+		},
+		{
+			name: "missing subject",
+			ac: AccessCheck{
+				Relation:   "member",
+				ObjectType: "organization",
+				ObjectID:   "ulid-of-org",
+			},
+			expectedRes: false,
+			wantErr:     true,
+		},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			// setup mock client
+			c := mock_fga.NewMockSdkClient(t)
+			mc := NewMockFGAClient(t, c)
+
+			if tc.expectedRes {
+				mock_fga.CheckAny(t, c, tc.expectedRes)
+			}
+
+			// do request
+			valid, err := mc.CheckAccess(context.Background(), tc.ac)
+
+			if tc.wantErr {
+				assert.Error(t, err)
 				assert.Equal(t, tc.expectedRes, valid)
 
 				return

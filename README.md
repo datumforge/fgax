@@ -68,11 +68,13 @@ package ent
 
 #### Usage
 
-When creating the `*ent.Client` add the following to enable the authz hooks:
+When creating the `*ent.Client` add the following to enable the authz hooks and policies:
 
 ```
 	client.WithAuthz()
 ```
+
+## Generate Hooks and Policies
 
 In the `ent` schema, provide the following annotation:
 
@@ -81,14 +83,63 @@ In the `ent` schema, provide the following annotation:
 func (OrgMembership) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entfga.Annotations{
-			ObjectType: "organization",
-		},
+			ObjectType:   "organization",
+			IncludeHooks: true,
+			IDField:      "OrganizationID", // Defaults to ID, override to object ID field 
+		}, 
 	}
 }
 ```
 
 The `ObjectType` **must** be the same between the ID field name in the schema and the object type in the FGA relationship. In the example above
 the field in the schema is `OrganizationID` and the object in FGA is `organization`. 
+
+## Generate Policies Only
+
+In the `ent` schema, provide the following annotation:
+
+```go
+// Annotations of the Organization
+func (Organization) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entfga.Annotations{
+			ObjectType:   "organization",
+			IncludeHooks: false,
+		},
+	}
+}
+```
+
+## Using Policies
+
+A policy check function will be created per mutation and query type when the annotation is used, these can be set on the policy of the schema. 
+They must be wrapped in the `privacy` `MutationRuleFunc`, as seen the example below: 
+
+```go
+// Policy of the Organization
+func (Organization) Policy() ent.Policy {
+	return privacy.Policy{
+		Mutation: privacy.MutationPolicy{
+			rule.DenyIfNoSubject(),
+			privacy.OrganizationMutationRuleFunc(func(ctx context.Context, m *generated.OrganizationMutation) error {
+				return m.CheckAccessForEdit(ctx)
+			}),
+			// Add a separate delete policy if permissions for delete of the object differ from normal edit permissions
+			privacy.OrganizationMutationRuleFunc(func(ctx context.Context, m *generated.OrganizationMutation) error {
+				return m.CheckAccessForDelete(ctx)
+			}),
+			privacy.AlwaysDenyRule(),
+		},
+		Query: privacy.QueryPolicy{
+			privacy.OrganizationQueryRuleFunc(func(ctx context.Context, q *generated.OrganizationQuery) error {
+				return q.CheckAccess(ctx)
+			}),
+			privacy.AlwaysDenyRule(),
+		},
+	}
+}
+```
+
 
 #### Soft Deletes
 
