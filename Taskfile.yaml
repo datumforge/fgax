@@ -1,5 +1,10 @@
 version: '3'
 
+includes:
+  example: 
+    taskfile: ./entfga/_examples/basic/
+    dir: ./entfga/_examples/basic/
+
 tasks:
   generate:
     desc: generate the mock fga client

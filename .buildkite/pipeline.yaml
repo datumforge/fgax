@@ -14,7 +14,7 @@ steps:
           command: ["task", "ci"]
           environment: 
             - "GOTOOLCHAIN=auto"
-            
+
 - group: ":test_tube: Tests"
   key: "tests"
   depends_on: "precheck"
@@ -34,7 +34,15 @@ steps:
           image: golang:1.22.0
           command: ["go", "test", "-coverprofile=coverage.out","./..."]
     artifact_paths: ["coverage.out"]
-
+  - label: ":test_tube: generate example"
+    key: "example_generate"
+    plugins:
+      - docker#v5.10.0:
+          image: "ghcr.io/datumforge/base-ci-image:14-2702e70f"
+          workdir: "/fgax"
+          command: ["task", "example:generate"]
+          environment: 
+            - "GOTOOLCHAIN=auto"
   
 - group: ":closed_lock_with_key: Security Checks"
   depends_on: "tests"

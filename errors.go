@@ -12,6 +12,9 @@ var (
 	// ErrMissingRelation is returned when a relation is empty in a tuple creation
 	ErrMissingRelation = errors.New("unable to create tuple, missing relation")
 
+	// ErrInvalidAccessCheck is returned when a field required to check a tuple is empty
+	ErrInvalidAccessCheck = errors.New("unable to check tuple, missing required field")
+
 	// ErrMissingObject is returned when a object is empty in a tuple creation
 	ErrMissingObject = errors.New("unable to create tuple, missing object")
 
