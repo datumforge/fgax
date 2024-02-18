@@ -74,6 +74,12 @@ When creating the `*ent.Client` add the following to enable the authz hooks and 
 	client.WithAuthz()
 ```
 
+The `privacy` feature **must** be turned on:
+
+```
+	Features: []gen.Feature{gen.FeaturePrivacy},
+```
+
 ## Generate Hooks and Policies
 
 In the `ent` schema, provide the following annotation:
