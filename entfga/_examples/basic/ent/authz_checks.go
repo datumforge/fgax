@@ -18,7 +18,8 @@ func (q *OrgMembershipQuery) CheckAccess(ctx context.Context) error {
 
 	if gCtx != nil {
 		ac := fgax.AccessCheck{
-			Relation: fgax.CanView,
+			Relation:   fgax.CanView,
+			ObjectType: "organization",
 		}
 
 		// check id from graphql arg context
@@ -153,7 +154,8 @@ func (q *OrganizationQuery) CheckAccess(ctx context.Context) error {
 
 	if gCtx != nil {
 		ac := fgax.AccessCheck{
-			Relation: fgax.CanView,
+			Relation:   fgax.CanView,
+			ObjectType: "organization",
 		}
 
 		// check id from graphql arg context

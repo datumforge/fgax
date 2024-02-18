@@ -32,6 +32,7 @@ import (
             if gCtx != nil {
                 ac := fgax.AccessCheck{
                     Relation: fgax.CanView,
+                    ObjectType:  "{{ $objectType | ToLower }}",
                 }
 
                 // check id from graphql arg context
