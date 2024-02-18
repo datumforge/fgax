@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"context"
+
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
@@ -9,7 +11,9 @@ import (
 	"entgo.io/ent/schema/index"
 	"github.com/datumforge/fgax/entfga"
 
+	generated "github.com/datumforge/fgax/entfga/_examples/basic/ent"
 	"github.com/datumforge/fgax/entfga/_examples/basic/ent/enums"
+	"github.com/datumforge/fgax/entfga/_examples/basic/ent/privacy"
 )
 
 // OrgMembership holds the schema definition for the OrgMembership entity
@@ -46,6 +50,7 @@ func (OrgMembership) Edges() []ent.Edge {
 func (OrgMembership) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
+
 		entfga.Annotations{
 			ObjectType:   "organization",
 			IncludeHooks: true,
@@ -61,20 +66,20 @@ func (OrgMembership) Indexes() []ent.Index {
 	}
 }
 
-// // Policy of the OrgMembership
-// func (OrgMembership) Policy() ent.Policy {
-// 	return privacy.Policy{
-// 		Mutation: privacy.MutationPolicy{
-// 			privacy.OrgMembershipMutationRuleFunc(func(ctx context.Context, m *generated.OrgMembershipMutation) error {
-// 				return m.CheckAccessForEdit(ctx)
-// 			}),
-// 			privacy.AlwaysDenyRule(),
-// 		},
-// 		Query: privacy.QueryPolicy{
-// 			privacy.OrgMembershipQueryRuleFunc(func(ctx context.Context, q *generated.OrgMembershipQuery) error {
-// 				return q.CheckAccess(ctx)
-// 			}),
-// 			privacy.AlwaysDenyRule(),
-// 		},
-// 	}
-// }
+// Policy of the OrgMembership
+func (OrgMembership) Policy() ent.Policy {
+	return privacy.Policy{
+		Mutation: privacy.MutationPolicy{
+			privacy.OrgMembershipMutationRuleFunc(func(ctx context.Context, m *generated.OrgMembershipMutation) error {
+				return m.CheckAccessForEdit(ctx)
+			}),
+			privacy.AlwaysDenyRule(),
+		},
+		Query: privacy.QueryPolicy{
+			privacy.OrgMembershipQueryRuleFunc(func(ctx context.Context, q *generated.OrgMembershipQuery) error {
+				return q.CheckAccess(ctx)
+			}),
+			privacy.AlwaysDenyRule(),
+		},
+	}
+}

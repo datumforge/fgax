@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 
@@ -363,6 +364,12 @@ func (omq *OrgMembershipQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		omq.sql = prev
+	}
+	if orgmembership.Policy == nil {
+		return errors.New("ent: uninitialized orgmembership.Policy (forgotten import ent/runtime?)")
+	}
+	if err := orgmembership.Policy.EvalQuery(ctx, omq); err != nil {
+		return err
 	}
 	return nil
 }

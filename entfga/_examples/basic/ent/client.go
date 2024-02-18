@@ -369,7 +369,8 @@ func (c *OrgMembershipClient) QueryOrganization(om *OrgMembership) *Organization
 
 // Hooks returns the client hooks.
 func (c *OrgMembershipClient) Hooks() []Hook {
-	return c.hooks.OrgMembership
+	hooks := c.hooks.OrgMembership
+	return append(hooks[:len(hooks):len(hooks)], orgmembership.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -502,7 +503,8 @@ func (c *OrganizationClient) GetX(ctx context.Context, id string) *Organization 
 
 // Hooks returns the client hooks.
 func (c *OrganizationClient) Hooks() []Hook {
-	return c.hooks.Organization
+	hooks := c.hooks.Organization
+	return append(hooks[:len(hooks):len(hooks)], organization.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.

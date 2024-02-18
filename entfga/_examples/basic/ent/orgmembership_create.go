@@ -65,7 +65,9 @@ func (omc *OrgMembershipCreate) Mutation() *OrgMembershipMutation {
 
 // Save creates the OrgMembership in the database.
 func (omc *OrgMembershipCreate) Save(ctx context.Context) (*OrgMembership, error) {
-	omc.defaults()
+	if err := omc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, omc.sqlSave, omc.mutation, omc.hooks)
 }
 
@@ -92,11 +94,12 @@ func (omc *OrgMembershipCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (omc *OrgMembershipCreate) defaults() {
+func (omc *OrgMembershipCreate) defaults() error {
 	if _, ok := omc.mutation.Role(); !ok {
 		v := orgmembership.DefaultRole
 		omc.mutation.SetRole(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.

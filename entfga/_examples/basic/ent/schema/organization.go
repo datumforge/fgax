@@ -1,12 +1,17 @@
 package schema
 
 import (
+	"context"
+
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 	"github.com/datumforge/fgax/entfga"
+
+	generated "github.com/datumforge/fgax/entfga/_examples/basic/ent"
+	"github.com/datumforge/fgax/entfga/_examples/basic/ent/privacy"
 )
 
 // Organization holds the schema definition for the Organization entity
@@ -46,14 +51,14 @@ func (Organization) Annotations() []schema.Annotation {
 	}
 }
 
-// // Policy defines the privacy policy of the Organization.
-// func (Organization) Policy() ent.Policy {
-// 	return privacy.Policy{
-// 		Query: privacy.QueryPolicy{
-// 			privacy.OrganizationQueryRuleFunc(func(ctx context.Context, q *generated.OrganizationQuery) error {
-// 				return q.CheckAccess(ctx)
-// 			}),
-// 			privacy.AlwaysDenyRule(), // Deny all other users
-// 		},
-// 	}
-// }
+// Policy defines the privacy policy of the Organization.
+func (Organization) Policy() ent.Policy {
+	return privacy.Policy{
+		Query: privacy.QueryPolicy{
+			privacy.OrganizationQueryRuleFunc(func(ctx context.Context, q *generated.OrganizationQuery) error {
+				return q.CheckAccess(ctx)
+			}),
+			privacy.AlwaysDenyRule(), // Deny all other users
+		},
+	}
+}
