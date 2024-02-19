@@ -11,6 +11,8 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/fgax"
 	"github.com/datumforge/fgax/entfga/_examples/basic/auth"
+	"github.com/datumforge/fgax/entfga/_examples/basic/ent/organization"
+	"github.com/datumforge/fgax/entfga/_examples/basic/ent/orgmembership"
 )
 
 func (q *OrgMembershipQuery) CheckAccess(ctx context.Context) error {
@@ -24,6 +26,7 @@ func (q *OrgMembershipQuery) CheckAccess(ctx context.Context) error {
 
 		// check id from graphql arg context
 		// when all objects are requested, the interceptor will check object access
+		// check the where input first
 		whereArg := gCtx.Args["where"]
 		if whereArg != nil {
 			where, ok := whereArg.(*OrgMembershipWhereInput)
@@ -32,12 +35,24 @@ func (q *OrgMembershipQuery) CheckAccess(ctx context.Context) error {
 			}
 		}
 
+		// if that doesnt work, check for the id in the args
 		if ac.ObjectID == "" {
-			var ok bool
-			ac.ObjectID, ok = gCtx.Args["id"].(string)
-			if !ok {
-				return privacy.Allowf("nil request, bypassing auth check")
+			ac.ObjectID, _ = gCtx.Args["organizationid"].(string)
+		}
+
+		// if we still dont have an object id, run the query and grab the object ID
+		// from the result
+		// this happens on join tables where we have the join ID (for updates and deletes)
+		// and not the actual object id
+		if ac.ObjectID == "" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := q.Only(reqCtx)
+			if err != nil {
+				return privacy.Skipf("unable to check access, %s", err.Error())
 			}
+
+			ac.ObjectID = ob.OrganizationID
 		}
 
 		var err error
@@ -77,11 +92,24 @@ func (m *OrgMembershipMutation) CheckAccessForEdit(ctx context.Context) error {
 		ac.ObjectID = input.OrganizationID
 	}
 
+	// check the id from the args
 	if ac.ObjectID == "" {
-		var ok bool
-		ac.ObjectID, ok = gCtx.Args["id"].(string)
-		if !ok {
-			return privacy.Allowf("nil request, bypassing auth check")
+		ac.ObjectID, _ = gCtx.Args["organizationid"].(string)
+	}
+
+	// if this is still empty, we need to query the object to get the object id
+	// this happens on join tables where we have the join ID (for updates and deletes)
+	if ac.ObjectID == "" {
+		id, ok := gCtx.Args["id"].(string)
+		if ok {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := m.Client().OrgMembership.Query().Where(orgmembership.ID(id)).Only(reqCtx)
+			if err != nil {
+				return privacy.Skipf("unable to check access, %s", err.Error())
+			}
+
+			ac.ObjectID = ob.OrganizationID
 		}
 	}
 
@@ -160,6 +188,7 @@ func (q *OrganizationQuery) CheckAccess(ctx context.Context) error {
 
 		// check id from graphql arg context
 		// when all objects are requested, the interceptor will check object access
+		// check the where input first
 		whereArg := gCtx.Args["where"]
 		if whereArg != nil {
 			where, ok := whereArg.(*OrganizationWhereInput)
@@ -168,12 +197,24 @@ func (q *OrganizationQuery) CheckAccess(ctx context.Context) error {
 			}
 		}
 
+		// if that doesnt work, check for the id in the args
 		if ac.ObjectID == "" {
-			var ok bool
-			ac.ObjectID, ok = gCtx.Args["id"].(string)
-			if !ok {
-				return privacy.Allowf("nil request, bypassing auth check")
+			ac.ObjectID, _ = gCtx.Args["id"].(string)
+		}
+
+		// if we still dont have an object id, run the query and grab the object ID
+		// from the result
+		// this happens on join tables where we have the join ID (for updates and deletes)
+		// and not the actual object id
+		if ac.ObjectID == "" {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := q.Only(reqCtx)
+			if err != nil {
+				return privacy.Skipf("unable to check access, %s", err.Error())
 			}
+
+			ac.ObjectID = ob.ID
 		}
 
 		var err error
@@ -204,11 +245,24 @@ func (m *OrganizationMutation) CheckAccessForEdit(ctx context.Context) error {
 
 	gCtx := graphql.GetFieldContext(ctx)
 
+	// check the id from the args
 	if ac.ObjectID == "" {
-		var ok bool
-		ac.ObjectID, ok = gCtx.Args["id"].(string)
-		if !ok {
-			return privacy.Allowf("nil request, bypassing auth check")
+		ac.ObjectID, _ = gCtx.Args["id"].(string)
+	}
+
+	// if this is still empty, we need to query the object to get the object id
+	// this happens on join tables where we have the join ID (for updates and deletes)
+	if ac.ObjectID == "" {
+		id, ok := gCtx.Args["id"].(string)
+		if ok {
+			// allow this query to run
+			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+			ob, err := m.Client().Organization.Query().Where(organization.ID(id)).Only(reqCtx)
+			if err != nil {
+				return privacy.Skipf("unable to check access, %s", err.Error())
+			}
+
+			ac.ObjectID = ob.ID
 		}
 	}
 
