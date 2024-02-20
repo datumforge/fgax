@@ -32,24 +32,43 @@ import (
             if gCtx != nil {
                 ac := fgax.AccessCheck{
                     Relation: fgax.CanView,
+                    ObjectType:  "{{ $objectType | ToLower }}",
                 }
 
                 // check id from graphql arg context
                 // when all objects are requested, the interceptor will check object access
+                // check the where input first
                 whereArg := gCtx.Args["where"]
                 if whereArg != nil {
-                    where, ok  := whereArg.(*{{ $name }}WhereInput)
+                    where, ok := whereArg.(*{{ $name }}WhereInput)
                     if ok && where != nil && where.{{ $idField }} != nil {
                         ac.ObjectID = *where.{{ $idField }}
-                    } 
+                    }
                 }
 
+                // if that doesn't work, check for the id in the args
                 if ac.ObjectID == "" {
-                    var ok bool
-                    ac.ObjectID, ok = gCtx.Args["id"].(string)
-                    if !ok {
+                    ac.ObjectID, _ = gCtx.Args["{{ $idField | ToLower }}"].(string)
+                }
+            
+                // if we still don't have an object id, run the query and grab the object ID 
+                // from the result
+                // this happens on join tables where we have the join ID (for updates and deletes)
+                // and not the actual object id
+                if ac.ObjectID == "" && "id" !=  "{{ $idField | ToLower }}" {
+                    // allow this query to run
+                    reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+                    ob, err := q.Only(reqCtx)
+                    if err != nil {
                         return privacy.Allowf("nil request, bypassing auth check")
                     }
+                    
+                    ac.ObjectID = ob.{{ $idField }}
+                }
+
+                // request is for a list objects, will get filtered in interceptors
+                if ac.ObjectID == ""  {
+                    return privacy.Allowf("nil request, bypassing auth check")
                 }
 
                 var err error
@@ -91,13 +110,31 @@ import (
                 ac.ObjectID = input.{{ $idField }}
             } 
             {{ end }}
-            
+
+            // check the id from the args
             if ac.ObjectID == "" {
-                var ok bool
-                ac.ObjectID, ok = gCtx.Args["id"].(string)
-                if !ok {
-                    return privacy.Allowf("nil request, bypassing auth check")
+                ac.ObjectID, _ = gCtx.Args["{{ $idField | ToLower }}"].(string)
+            }
+
+            // if this is still empty, we need to query the object to get the object id
+            // this happens on join tables where we have the join ID (for updates and deletes)
+            if ac.ObjectID == "" && "id" !=  "{{ $idField | ToLower }}" {
+                id, ok := gCtx.Args["id"].(string)
+                if ok {
+                    // allow this query to run
+                    reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+                    ob, err := m.Client().{{ $name }}.Query().Where({{ $name | ToLower }}.ID(id)).Only(reqCtx)
+                    if err != nil {
+                        return privacy.Allowf("nil request, bypassing auth check")
+                    }
+
+                    ac.ObjectID = ob.{{ $idField }}
                 }
+            }
+
+            // request is for a list objects, will get filtered in interceptors
+            if ac.ObjectID == ""  {
+                return privacy.Allowf("nil request, bypassing auth check")
             }
 
             m.Logger.Debugw("checking mutation access")
