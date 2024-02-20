@@ -35,24 +35,29 @@ func (q *OrgMembershipQuery) CheckAccess(ctx context.Context) error {
 			}
 		}
 
-		// if that doesnt work, check for the id in the args
+		// if that doesn't work, check for the id in the args
 		if ac.ObjectID == "" {
 			ac.ObjectID, _ = gCtx.Args["organizationid"].(string)
 		}
 
-		// if we still dont have an object id, run the query and grab the object ID
+		// if we still don't have an object id, run the query and grab the object ID
 		// from the result
 		// this happens on join tables where we have the join ID (for updates and deletes)
 		// and not the actual object id
-		if ac.ObjectID == "" {
+		if ac.ObjectID == "" && "id" != "organizationid" {
 			// allow this query to run
 			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
 			ob, err := q.Only(reqCtx)
 			if err != nil {
-				return privacy.Skipf("unable to check access, %s", err.Error())
+				return privacy.Allowf("nil request, bypassing auth check")
 			}
 
 			ac.ObjectID = ob.OrganizationID
+		}
+
+		// request is for a list objects, will get filtered in interceptors
+		if ac.ObjectID == "" {
+			return privacy.Allowf("nil request, bypassing auth check")
 		}
 
 		var err error
@@ -106,11 +111,16 @@ func (m *OrgMembershipMutation) CheckAccessForEdit(ctx context.Context) error {
 			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
 			ob, err := m.Client().OrgMembership.Query().Where(orgmembership.ID(id)).Only(reqCtx)
 			if err != nil {
-				return privacy.Skipf("unable to check access, %s", err.Error())
+				return privacy.Allowf("nil request, bypassing auth check")
 			}
 
 			ac.ObjectID = ob.OrganizationID
 		}
+	}
+
+	// request is for a list objects, will get filtered in interceptors
+	if ac.ObjectID == "" {
+		return privacy.Allowf("nil request, bypassing auth check")
 	}
 
 	m.Logger.Debugw("checking mutation access")
@@ -197,24 +207,29 @@ func (q *OrganizationQuery) CheckAccess(ctx context.Context) error {
 			}
 		}
 
-		// if that doesnt work, check for the id in the args
+		// if that doesn't work, check for the id in the args
 		if ac.ObjectID == "" {
 			ac.ObjectID, _ = gCtx.Args["id"].(string)
 		}
 
-		// if we still dont have an object id, run the query and grab the object ID
+		// if we still don't have an object id, run the query and grab the object ID
 		// from the result
 		// this happens on join tables where we have the join ID (for updates and deletes)
 		// and not the actual object id
-		if ac.ObjectID == "" {
+		if ac.ObjectID == "" && "id" != "id" {
 			// allow this query to run
 			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
 			ob, err := q.Only(reqCtx)
 			if err != nil {
-				return privacy.Skipf("unable to check access, %s", err.Error())
+				return privacy.Allowf("nil request, bypassing auth check")
 			}
 
 			ac.ObjectID = ob.ID
+		}
+
+		// request is for a list objects, will get filtered in interceptors
+		if ac.ObjectID == "" {
+			return privacy.Allowf("nil request, bypassing auth check")
 		}
 
 		var err error
@@ -259,11 +274,16 @@ func (m *OrganizationMutation) CheckAccessForEdit(ctx context.Context) error {
 			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
 			ob, err := m.Client().Organization.Query().Where(organization.ID(id)).Only(reqCtx)
 			if err != nil {
-				return privacy.Skipf("unable to check access, %s", err.Error())
+				return privacy.Allowf("nil request, bypassing auth check")
 			}
 
 			ac.ObjectID = ob.ID
 		}
+	}
+
+	// request is for a list objects, will get filtered in interceptors
+	if ac.ObjectID == "" {
+		return privacy.Allowf("nil request, bypassing auth check")
 	}
 
 	m.Logger.Debugw("checking mutation access")
