@@ -38,7 +38,7 @@ require (
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/openfga/api/proto v0.0.0-20240201160513-05de9d8be3ee // indirect
 	github.com/openfga/go-sdk v0.3.5 // indirect
-	github.com/openfga/language/pkg/go v0.0.0-20240215211519-5a227c9592dc // indirect
+	github.com/openfga/language/pkg/go v0.0.0-20240219105206-c13154377de0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect

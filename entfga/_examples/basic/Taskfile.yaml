@@ -5,11 +5,13 @@ tasks:
   ent:
     desc: runs go generate against ent schema - see the entc.go file and generates the fga mock client
     cmds:
+      - go mod tidy
       - go generate ./...
 
   gqlgen:
     desc: runs gqlgen and gqlgenc commands using gen_generate.go and entc
     cmds:
+      - go mod tidy
       - go run github.com/99designs/gqlgen generate --verbose
       - go mod tidy
       - go run ./gen_schema.go
