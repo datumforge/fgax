@@ -9,12 +9,12 @@ require (
 	entgo.io/contrib v0.4.5
 	entgo.io/ent v0.13.0
 	github.com/99designs/gqlgen v0.17.44
-	github.com/datumforge/datum v0.3.1
-	github.com/datumforge/fgax v0.0.3
+	github.com/datumforge/datum v0.3.2
+	github.com/datumforge/fgax v0.0.5-0.20240220042328-ca3be68827ec
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/stretchr/testify v1.8.4
 	github.com/vektah/gqlparser/v2 v2.5.11
-	go.uber.org/zap v1.26.0
+	go.uber.org/zap v1.27.0
 )
 
 require (
