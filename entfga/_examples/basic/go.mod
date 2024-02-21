@@ -9,10 +9,8 @@ require (
 	entgo.io/contrib v0.4.5
 	entgo.io/ent v0.13.0
 	github.com/99designs/gqlgen v0.17.44
-	github.com/datumforge/datum v0.3.1
 	github.com/datumforge/fgax v0.0.3
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/stretchr/testify v1.8.4
 	github.com/vektah/gqlparser/v2 v2.5.11
 	go.uber.org/zap v1.27.0
 )
@@ -31,10 +29,12 @@ require (
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
+	github.com/gorilla/websocket v1.5.1 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.1 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.19.1 // indirect
 	github.com/kelseyhightower/envconfig v1.4.0 // indirect
+	github.com/mattn/go-sqlite3 v1.14.22 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/openfga/api/proto v0.0.0-20240201160513-05de9d8be3ee // indirect
 	github.com/openfga/go-sdk v0.3.5 // indirect
@@ -45,6 +45,7 @@ require (
 	github.com/sosodev/duration v1.2.0 // indirect
 	github.com/stoewer/go-strcase v1.3.0 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
+	github.com/stretchr/testify v1.8.4 // indirect
 	github.com/urfave/cli/v2 v2.27.1 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.4.1 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
