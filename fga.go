@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"os"
 
-	"github.com/kelseyhightower/envconfig"
 	openfga "github.com/openfga/go-sdk"
 	ofgaclient "github.com/openfga/go-sdk/client"
 	"github.com/openfga/go-sdk/credentials"
@@ -33,35 +32,17 @@ type Client struct {
 // Config configures the openFGA setup
 type Config struct {
 	// Enabled - checks this first before reading the config
-	Enabled bool `yaml:"enabled" split_words:"true" default:"true"`
+	Enabled bool `json:"enabled" koanf:"enabled" default:"true"`
 	// StoreName of the FGA Store
-	StoreName string `yaml:"storeName" split_words:"true" default:"datum"`
-	// Host of the fga API
-	Host string `yaml:"host" split_words:"true" default:"authz.datum.net"`
-	// Scheme to connect to the fga API (http or https)
-	Scheme string `yaml:"enabled" split_words:"true" default:"https"`
+	StoreName string `json:"store_name" koanf:"store_name" default:"datum"`
+	// HostURL of the fga API, replaces Host and Scheme settings
+	HostURL string `json:"host_url" koanf:"host_url" jsonschema:"required" default:"https://authz.datum.net"`
 	// StoreID of the authorization store in FGA
-	StoreID string `yaml:"enabled" split_words:"true" default:""`
+	StoreID string `json:"store_id" koanf:"store_id"`
 	// ModelID that already exists in authorization store to be used
-	ModelID string `yaml:"enabled" split_words:"true" default:""`
+	ModelID string `json:"model_id" koanf:"model_id"`
 	// CreateNewModel force creates a new model, even if one already exists
-	CreateNewModel bool `yaml:"enabled" split_words:"true" default:"false"`
-	// logger contains the zap logger
-	logger *zap.SugaredLogger
-}
-
-// NewAuthzConfig returns a new authorization configuration
-func NewAuthzConfig(l *zap.SugaredLogger) (*Config, error) {
-	c := &Config{}
-
-	err := envconfig.Process("datum_authz", c)
-	if err != nil {
-		return nil, err
-	}
-
-	c.logger = l
-
-	return c, nil
+	CreateNewModel bool `json:"create_new_model" koanf:"create_new_model" default:"false"`
 }
 
 // Option is a functional configuration option for openFGA client
@@ -77,7 +58,7 @@ func NewClient(host string, opts ...Option) (*Client, error) {
 	// The api host is the only required field when setting up a new FGA client connection
 	client := Client{
 		Config: ofgaclient.ClientConfiguration{
-			ApiHost: host,
+			ApiUrl: host,
 		},
 	}
 
@@ -99,10 +80,10 @@ func (c *Client) GetModelID() string {
 	return c.Config.AuthorizationModelId
 }
 
-// WithScheme sets the open fga scheme, defaults to "https"
-func WithScheme(scheme string) Option {
+// WithLogger sets logger
+func WithLogger(l *zap.SugaredLogger) Option {
 	return func(c *Client) {
-		c.Config.ApiScheme = scheme
+		c.Logger = l
 	}
 }
 
@@ -132,24 +113,14 @@ func WithToken(token string) Option {
 	}
 }
 
-// WithLogger sets logger
-func WithLogger(l *zap.SugaredLogger) Option {
-	return func(c *Client) {
-		c.Logger = l
-	}
-}
-
 // CreateFGAClientWithStore returns a Client with a store and model configured
-func CreateFGAClientWithStore(ctx context.Context, c Config) (*Client, error) {
-	c.logger.Infow("setting up fga client", "host", c.Host, "scheme", c.Scheme)
-
+func CreateFGAClientWithStore(ctx context.Context, c Config, l *zap.SugaredLogger) (*Client, error) {
 	// create store if an ID was not configured
 	if c.StoreID == "" {
 		// Create new store
 		fgaClient, err := NewClient(
-			c.Host,
-			WithScheme(c.Scheme),
-			WithLogger(c.logger),
+			c.HostURL,
+			WithLogger(l),
 		)
 		if err != nil {
 			return nil, err
@@ -165,10 +136,9 @@ func CreateFGAClientWithStore(ctx context.Context, c Config) (*Client, error) {
 	if c.ModelID == "" {
 		// create fga client with store ID
 		fgaClient, err := NewClient(
-			c.Host,
-			WithScheme(c.Scheme),
+			c.HostURL,
 			WithStoreID(c.StoreID),
-			WithLogger(c.logger),
+			WithLogger(l),
 		)
 		if err != nil {
 			return nil, err
@@ -186,11 +156,10 @@ func CreateFGAClientWithStore(ctx context.Context, c Config) (*Client, error) {
 
 	// create fga client with store ID
 	return NewClient(
-		c.Host,
-		WithScheme(c.Scheme),
+		c.HostURL,
 		WithStoreID(c.StoreID),
 		WithAuthorizationModelID(c.ModelID),
-		WithLogger(c.logger),
+		WithLogger(l),
 	)
 }
 
