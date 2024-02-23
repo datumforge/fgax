@@ -32,17 +32,17 @@ type Client struct {
 // Config configures the openFGA setup
 type Config struct {
 	// Enabled - checks this first before reading the config
-	Enabled bool `json:"enabled" koanf:"enabled" default:"true"`
+	Enabled bool `json:"enabled" koanf:"enabled" jsonschema:"description=enables authorization checks with openFGA" default:"true"`
 	// StoreName of the FGA Store
-	StoreName string `json:"store_name" koanf:"store_name" default:"datum"`
+	StoreName string `json:"store_name" koanf:"store_name" jsonschema:"description=name of openFGA store" default:"datum"`
 	// HostURL of the fga API, replaces Host and Scheme settings
-	HostURL string `json:"host_url" koanf:"host_url" jsonschema:"required" default:"https://authz.datum.net"`
+	HostURL string `json:"host_url" koanf:"host_url" jsonschema:"description=host url with scheme of the openFGA API,required" default:"https://authz.datum.net"`
 	// StoreID of the authorization store in FGA
-	StoreID string `json:"store_id" koanf:"store_id"`
+	StoreID string `json:"store_id" koanf:"store_id" jsonschema:"description=id of openFGA store"`
 	// ModelID that already exists in authorization store to be used
-	ModelID string `json:"model_id" koanf:"model_id"`
+	ModelID string `json:"model_id" koanf:"model_id" jsonschema:"description=id of openFGA model"`
 	// CreateNewModel force creates a new model, even if one already exists
-	CreateNewModel bool `json:"create_new_model" koanf:"create_new_model" default:"false"`
+	CreateNewModel bool `json:"create_new_model" koanf:"create_new_model" jsonschema:"description=force create a new model, even if one already exists" default:"false"`
 }
 
 // Option is a functional configuration option for openFGA client
