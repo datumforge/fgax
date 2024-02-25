@@ -58,7 +58,7 @@ import (
                 if ac.ObjectID == "" && "id" !=  "{{ $idField | ToLower }}" {
                     // allow this query to run
                     reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
-                    ob, err := q.Only(reqCtx)
+                    ob, err := q.Clone().Only(reqCtx)
                     if err != nil {
                         return privacy.Allowf("nil request, bypassing auth check")
                     }
