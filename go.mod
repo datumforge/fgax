@@ -7,7 +7,7 @@ require (
 	github.com/99designs/gqlgen v0.17.44
 	github.com/Yamashou/gqlgenc v0.19.2
 	github.com/openfga/go-sdk v0.3.5
-	github.com/openfga/language/pkg/go v0.0.0-20240222161358-20ec0be0006d
+	github.com/openfga/language/pkg/go v0.0.0-20240226140625-98bcbf4d9f60
 	github.com/pkg/errors v0.9.1
 	github.com/stoewer/go-strcase v1.3.0
 	github.com/stretchr/testify v1.8.4
