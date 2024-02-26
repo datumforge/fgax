@@ -47,7 +47,7 @@ func (q *OrgMembershipQuery) CheckAccess(ctx context.Context) error {
 		if ac.ObjectID == "" && "id" != "organizationid" {
 			// allow this query to run
 			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
-			ob, err := q.Only(reqCtx)
+			ob, err := q.Clone().Only(reqCtx)
 			if err != nil {
 				return privacy.Allowf("nil request, bypassing auth check")
 			}
@@ -219,7 +219,7 @@ func (q *OrganizationQuery) CheckAccess(ctx context.Context) error {
 		if ac.ObjectID == "" && "id" != "id" {
 			// allow this query to run
 			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
-			ob, err := q.Only(reqCtx)
+			ob, err := q.Clone().Only(reqCtx)
 			if err != nil {
 				return privacy.Allowf("nil request, bypassing auth check")
 			}
