@@ -3,7 +3,7 @@ module github.com/datumforge/fgax
 go 1.22.0
 
 require (
-	entgo.io/ent v0.13.0
+	entgo.io/ent v0.13.1
 	github.com/99designs/gqlgen v0.17.44
 	github.com/Yamashou/gqlgenc v0.19.2
 	github.com/openfga/go-sdk v0.3.5
