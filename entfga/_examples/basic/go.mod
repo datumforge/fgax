@@ -9,7 +9,7 @@ require (
 	entgo.io/contrib v0.4.5
 	entgo.io/ent v0.13.1
 	github.com/99designs/gqlgen v0.17.44
-	github.com/datumforge/fgax v0.1.1
+	github.com/datumforge/fgax v0.1.2
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/vektah/gqlparser/v2 v2.5.11
 	go.uber.org/zap v1.27.0
@@ -37,7 +37,7 @@ require (
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/openfga/api/proto v0.0.0-20240201160513-05de9d8be3ee // indirect
 	github.com/openfga/go-sdk v0.3.5 // indirect
-	github.com/openfga/language/pkg/go v0.0.0-20240226140625-98bcbf4d9f60 // indirect
+	github.com/openfga/language/pkg/go v0.0.0-20240228042802-8a4d89e59751 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
