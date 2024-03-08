@@ -32,6 +32,16 @@ func extractIDField(val any) string {
 	return idField
 }
 
+// extractNillableIDField gets the key that is used for the nillable id field
+func extractNillableIDField(val any) bool {
+	nillable, ok := val.(bool)
+	if !ok {
+		return false
+	}
+
+	return nillable
+}
+
 // hasCreateID checks if the input would have the ID to check permissions
 func hasCreateID(val any) bool {
 	idField, ok := val.(string)
@@ -65,13 +75,14 @@ func useSoftDeletes(config Config) bool {
 func parseTemplate(name, path string) *gen.Template {
 	t := gen.NewTemplate(name)
 	t.Funcs(template.FuncMap{
-		"extractObjectType":   extractObjectType,
-		"extractIDField":      extractIDField,
-		"hasCreateID":         hasCreateID,
-		"extractIncludeHooks": extractIncludeHooks,
-		"useSoftDeletes":      useSoftDeletes,
-		"ToUpperCamel":        strcase.UpperCamelCase,
-		"ToLower":             strings.ToLower,
+		"extractObjectType":      extractObjectType,
+		"extractIDField":         extractIDField,
+		"extractNillableIDField": extractNillableIDField,
+		"hasCreateID":            hasCreateID,
+		"extractIncludeHooks":    extractIncludeHooks,
+		"useSoftDeletes":         useSoftDeletes,
+		"ToUpperCamel":           strcase.UpperCamelCase,
+		"ToLower":                strings.ToLower,
 	})
 
 	return gen.MustParse(t.ParseFS(_templates, path))

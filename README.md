@@ -100,6 +100,9 @@ func (OrgMembership) Annotations() []schema.Annotation {
 The `ObjectType` **must** be the same between the ID field name in the schema and the object type in the FGA relationship. In the example above
 the field in the schema is `OrganizationID` and the object in FGA is `organization`. 
 
+If the `ID` field is `Optional()`, you'll need to set `NillableIDField: true,` on the annotation to ensure the `string` value is used instead of the `pointer` on the `CreateInput`.
+
+
 ## Generate Policies Only
 
 In the `ent` schema, provide the following annotation:
