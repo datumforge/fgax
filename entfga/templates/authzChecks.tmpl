@@ -25,6 +25,7 @@ import (
 
         {{ $objectType := extractObjectType $n.Annotations.Authz.ObjectType }}
         {{ $idField := extractIDField $n.Annotations.Authz.IDField  }}
+        {{ $nillable := extractNillableIDField $n.Annotations.Authz.NillableIDField  }}
 
         func (q *{{ $querier }}) CheckAccess(ctx context.Context) error {
             gCtx := graphql.GetFieldContext(ctx)
@@ -107,7 +108,11 @@ import (
             // check if the input is a Create{{ $name }}Input
             input, ok := gInput.(Create{{ $name }}Input)
             if ok {
+                {{- if $nillable }}
+                ac.ObjectID = *input.{{ $idField }}
+                {{ else }}
                 ac.ObjectID = input.{{ $idField }}
+                {{ end }}
             } 
             {{ end }}
 
