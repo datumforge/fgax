@@ -9,15 +9,26 @@ import (
 	ofgaclient "github.com/openfga/go-sdk/client"
 )
 
+// setup relations for use in creating tuples
 const (
-	// setup relations for use in creating tuples
+	// SystemAdminRole is the role for system admins that have the highest level of access
+	SystemAdminRole = "system_admin"
+	// MemberRelation is the relation for members of an entity
 	MemberRelation = "member"
-	AdminRelation  = "admin"
-	OwnerRelation  = "owner"
+	// AdminRelation is the relation for admins of an entity
+	AdminRelation = "admin"
+	// OwnerRelation is the relation for owners of an entity
+	OwnerRelation = "owner"
+	// ParentRelation is the relation for parents of an entity
 	ParentRelation = "parent"
-	CanView        = "can_view"
-	CanEdit        = "can_edit"
-	CanDelete      = "can_delete"
+	// AssigneeRoleRelation is the relation for assignees of an entity
+	RoleRelation = "assignee"
+	// CanView is the relation for viewing an entity
+	CanView = "can_view"
+	// CanEdit is the relation for editing an entity
+	CanEdit = "can_edit"
+	// CanDelete is the relation for deleting an entity
+	CanDelete = "can_delete"
 )
 
 type TupleKey struct {
