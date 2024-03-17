@@ -81,6 +81,18 @@ func (c *Client) CheckGroupAccess(ctx context.Context, userID, groupID, relation
 	return c.CheckAccess(ctx, ac)
 }
 
+// CheckSystemAdminRole checks if the user has system admin access
+func (c *Client) CheckSystemAdminRole(ctx context.Context, userID string) (bool, error) {
+	ac := AccessCheck{
+		ObjectType: "role",
+		ObjectID:   SystemAdminRole,
+		Relation:   RoleRelation,
+		UserID:     userID,
+	}
+
+	return c.CheckAccess(ctx, ac)
+}
+
 // validateAccessCheck checks if the AccessCheck struct is valid
 func validateAccessCheck(ac AccessCheck) error {
 	if ac.UserID == "" {
