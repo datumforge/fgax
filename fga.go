@@ -19,7 +19,7 @@ const (
 	storeModelFile = "fga/model/datum.fga"
 )
 
-// Client is an event bus client with some configuration
+// Client is an ofga client with some configuration
 type Client struct {
 	// Ofga is the openFGA client
 	Ofga ofgaclient.SdkClient
