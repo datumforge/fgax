@@ -10,7 +10,7 @@ steps:
     key: "generate"
     plugins:
       - docker#v5.10.0:
-          image: "ghcr.io/datumforge/base-ci-image:14-2702e70f"
+          image: "ghcr.io/datumforge/base-ci-image:v1.1.3"
           command: ["task", "ci"]
           environment: 
             - "GOTOOLCHAIN=auto"
@@ -23,7 +23,7 @@ steps:
     key: "lint"
     plugins:
       - docker#v5.10.0:
-          image: "registry.hub.docker.com/golangci/golangci-lint:v1.55.2"
+          image: "registry.hub.docker.com/golangci/golangci-lint:v1.57.1"
           command: ["golangci-lint", "run", "-v", "--timeout", "10m"]
           environment: 
             - "GOTOOLCHAIN=auto"
@@ -38,7 +38,7 @@ steps:
     key: "example_generate"
     plugins:
       - docker#v5.10.0:
-          image: "ghcr.io/datumforge/base-ci-image:14-2702e70f"
+          image: "ghcr.io/datumforge/base-ci-image:v1.1.3"
           workdir: "/fgax"
           command: ["task", "example:generate"]
           environment: 

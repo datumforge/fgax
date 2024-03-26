@@ -217,6 +217,7 @@ func Test_tupleKeyToWriteRequest(t *testing.T) {
 		t.Run("Get "+tc.name, func(t *testing.T) {
 			ctk := tupleKeyToWriteRequest(tc.writes)
 			assert.NotEmpty(t, ctk)
+
 			if tc.expectedCount == 1 {
 				assert.Equal(t, tc.expectedUser, ctk[0].User)
 				assert.Equal(t, tc.expectedRelation, ctk[0].Relation)
@@ -332,6 +333,7 @@ func Test_tupleKeyToDeleteRequest(t *testing.T) {
 		t.Run("Get "+tc.name, func(t *testing.T) {
 			ctk := tupleKeyToDeleteRequest(tc.writes)
 			assert.NotEmpty(t, ctk)
+
 			if tc.expectedCount == 1 {
 				assert.Equal(t, tc.expectedUser, ctk[0].User)
 				assert.Equal(t, tc.expectedRelation, ctk[0].Relation)
