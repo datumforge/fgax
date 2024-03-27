@@ -14,11 +14,6 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-const (
-	// TODO: allow this to be configurable
-	storeModelFile = "fga/model/datum.fga"
-)
-
 // Client is an ofga client with some configuration
 type Client struct {
 	// Ofga is the openFGA client
@@ -43,6 +38,8 @@ type Config struct {
 	ModelID string `json:"modelId" koanf:"modelId" jsonschema:"description=id of openFGA model"`
 	// CreateNewModel force creates a new model, even if one already exists
 	CreateNewModel bool `json:"createNewModel" koanf:"createNewModel" jsonschema:"description=force create a new model, even if one already exists" default:"false"`
+	// ModelFile is the path to the model file
+	ModelFile string `json:"modelFile" koanf:"modelFile" jsonschema:"description=path to the fga model file" default:"fga/model/datum.fga"`
 }
 
 // Option is a functional configuration option for openFGA client
@@ -145,7 +142,7 @@ func CreateFGAClientWithStore(ctx context.Context, c Config, l *zap.SugaredLogge
 		}
 
 		// Create model if one does not already exist
-		modelID, err := fgaClient.CreateModel(ctx, storeModelFile, c.CreateNewModel)
+		modelID, err := fgaClient.CreateModel(ctx, c.ModelFile, c.CreateNewModel)
 		if err != nil {
 			return nil, err
 		}
