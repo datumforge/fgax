@@ -12,5 +12,8 @@
         "github.com/datumforge/fgax"
       ]
     }
+  ],
+  "labels": [
+    "dependencies"
   ]
 }
