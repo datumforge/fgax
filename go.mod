@@ -1,6 +1,6 @@
 module github.com/datumforge/fgax
 
-go 1.22.1
+go 1.22.2
 
 require (
 	entgo.io/ent v0.13.1

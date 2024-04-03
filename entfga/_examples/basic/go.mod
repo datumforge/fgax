@@ -3,7 +3,7 @@ module github.com/datumforge/fgax/entfga/_examples/basic
 // use local copy of repo
 replace github.com/datumforge/fgax => ../../../../fgax
 
-go 1.22.1
+go 1.22.2
 
 require (
 	entgo.io/contrib v0.4.5
@@ -37,7 +37,7 @@ require (
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/openfga/api/proto v0.0.0-20240312180017-0c609904ae24 // indirect
 	github.com/openfga/go-sdk v0.3.5 // indirect
-	github.com/openfga/language/pkg/go v0.0.0-20240328221832-7a66b52ab5fb // indirect
+	github.com/openfga/language/pkg/go v0.0.0-20240403104347-e5ca7af043a2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
