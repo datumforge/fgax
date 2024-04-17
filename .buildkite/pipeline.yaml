@@ -9,7 +9,7 @@ steps:
   - label: ":golang: go generate"
     key: "generate"
     plugins:
-      - docker#v5.10.0:
+      - docker#v5.11.0:
           image: "ghcr.io/datumforge/base-ci-image:v1.1.3"
           command: ["task", "ci"]
           environment: 
@@ -22,7 +22,7 @@ steps:
   - label: ":golangci-lint: lint :lint-roller:"
     key: "lint"
     plugins:
-      - docker#v5.10.0:
+      - docker#v5.11.0:
           image: "registry.hub.docker.com/golangci/golangci-lint:v1.57.1"
           command: ["golangci-lint", "run", "-v", "--timeout", "10m"]
           environment: 
@@ -30,14 +30,14 @@ steps:
   - label: ":golang: go test"
     key: "go_test"
     plugins:
-      - docker#v5.10.0:
+      - docker#v5.11.0:
           image: golang:1.22.2
           command: ["go", "test", "-coverprofile=coverage.out","./..."]
     artifact_paths: ["coverage.out"]
   - label: ":test_tube: generate example"
     key: "example_generate"
     plugins:
-      - docker#v5.10.0:
+      - docker#v5.11.0:
           image: "ghcr.io/datumforge/base-ci-image:v1.1.3"
           workdir: "/fgax"
           command: ["task", "example:generate"]
@@ -51,7 +51,7 @@ steps:
   - label: ":closed_lock_with_key: gosec"
     key: "gosec"
     plugins:
-      - docker#v5.10.0:
+      - docker#v5.11.0:
           image: "registry.hub.docker.com/securego/gosec:2.18.2"
           command: ["-no-fail", "-exclude-generated", "-fmt sonarqube", "-out", "results.txt", "./..."]
           environment:
@@ -68,7 +68,7 @@ steps:
       - artifacts#v1.9.3:
           download: "coverage.out"
           step: "go_test"    
-      - docker#v5.10.0:
+      - docker#v5.11.0:
             image: "sonarsource/sonar-scanner-cli:5"
             environment:
               - "SONAR_TOKEN"
@@ -85,7 +85,7 @@ steps:
       - artifacts#v1.9.3:
           download: coverage.out
           step: "go_test"
-      - docker#v5.10.0:
+      - docker#v5.11.0:
             image: "sonarsource/sonar-scanner-cli:5"
             environment:
               - "SONAR_TOKEN"
