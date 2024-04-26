@@ -23,6 +23,9 @@ var (
 
 	// ErrFailedToTransformModel is returned when the FGA model cannot be transformed to JSON
 	ErrFailedToTransformModel = errors.New("failed to transform fga model")
+
+	// ErrMissingObjectInModel is returned when an object is missing in the model
+	ErrMissingObjectInModel = errors.New("unable to create role, object type not found in model")
 )
 
 // InvalidEntityError is returned when an invalid openFGA entity is configured

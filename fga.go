@@ -2,16 +2,11 @@ package fgax
 
 import (
 	"context"
-	"encoding/json"
-	"os"
 
 	openfga "github.com/openfga/go-sdk"
 	ofgaclient "github.com/openfga/go-sdk/client"
 	"github.com/openfga/go-sdk/credentials"
-	language "github.com/openfga/language/pkg/go/transformer"
-	"github.com/pkg/errors"
 	"go.uber.org/zap"
-	"google.golang.org/protobuf/encoding/protojson"
 )
 
 // Client is an ofga client with some configuration
@@ -142,7 +137,7 @@ func CreateFGAClientWithStore(ctx context.Context, c Config, l *zap.SugaredLogge
 		}
 
 		// Create model if one does not already exist
-		modelID, err := fgaClient.CreateModel(ctx, c.ModelFile, c.CreateNewModel)
+		modelID, err := fgaClient.CreateModelFromFile(ctx, c.ModelFile, c.CreateNewModel)
 		if err != nil {
 			return nil, err
 		}
@@ -194,64 +189,6 @@ func (c *Client) CreateStore(ctx context.Context, storeName string) (string, err
 	c.Logger.Infow("fga store created", "store_id", storeID)
 
 	return storeID, nil
-}
-
-// CreateModel creates a new fine grained authorization model and returns the model ID
-func (c *Client) CreateModel(ctx context.Context, fn string, forceCreate bool) (string, error) {
-	options := ofgaclient.ClientReadAuthorizationModelsOptions{}
-
-	models, err := c.Ofga.ReadAuthorizationModels(context.Background()).Options(options).Execute()
-	if err != nil {
-		return "", err
-	}
-
-	// Only create a new test model if one does not exist and we aren't forcing a new model to be created
-	if !forceCreate {
-		if len(models.AuthorizationModels) > 0 {
-			modelID := models.GetAuthorizationModels()[0].Id
-			c.Logger.Infow("fga model exists", "model_id", modelID)
-
-			return modelID, nil
-		}
-	}
-
-	// Create new model
-	dsl, err := os.ReadFile(fn)
-	if err != nil {
-		return "", err
-	}
-
-	// convert to json
-	dslJSON, err := dslToJSON(dsl)
-	if err != nil {
-		return "", err
-	}
-
-	var body ofgaclient.ClientWriteAuthorizationModelRequest
-	if err := json.Unmarshal(dslJSON, &body); err != nil {
-		return "", err
-	}
-
-	resp, err := c.Ofga.WriteAuthorizationModel(ctx).Body(body).Execute()
-	if err != nil {
-		return "", err
-	}
-
-	modelID := resp.GetAuthorizationModelId()
-
-	c.Logger.Infow("fga model created", "model_id", modelID)
-
-	return modelID, nil
-}
-
-// dslToJSON converts fga model to JSON
-func dslToJSON(dslString []byte) ([]byte, error) {
-	parsedAuthModel, err := language.TransformDSLToProto(string(dslString))
-	if err != nil {
-		return []byte{}, errors.Wrap(err, ErrFailedToTransformModel.Error())
-	}
-
-	return protojson.Marshal(parsedAuthModel)
 }
 
 // Healthcheck reads the model to check if the connection is working
