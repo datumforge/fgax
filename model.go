@@ -94,6 +94,7 @@ type RoleRequest struct {
 	ObjectType string
 }
 
+// RelationCombination is the combination of the relation as an `and`, `or`, or `not`
 type RelationCombination string
 
 const (
@@ -105,6 +106,7 @@ const (
 	// Difference RelationCombination = "difference"
 )
 
+// RelationSetting includes the name of the relation as well as flags to determine the type of relation
 type RelationSetting struct {
 	// Relation is the relation to the object
 	Relation string
