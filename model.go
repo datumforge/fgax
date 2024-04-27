@@ -125,7 +125,7 @@ func (c *Client) AddOrReplaceRole(ctx context.Context, r RoleRequest) error {
 	// get the model
 	m := model.GetAuthorizationModel()
 
-	// then add the role
+	// get the type definitions from the existing model
 	td := m.TypeDefinitions
 
 	addedRole := false
@@ -171,13 +171,13 @@ func (c *Client) AddOrReplaceRole(ctx context.Context, r RoleRequest) error {
 		TypeDefinitions: m.TypeDefinitions,
 	}
 
-	// then write the model back
+	// write the model back
 	resp, err := c.Ofga.WriteAuthorizationModel(ctx).Body(request).Execute()
 	if err != nil {
 		return err
 	}
 
-	// then update to the new model ID in the config
+	// update to the new model ID in the config
 	c.Config.AuthorizationModelId = resp.GetAuthorizationModelId()
 
 	return nil
@@ -250,27 +250,10 @@ func createUsersets(r RoleRequest) (uses []openfga.Userset, directRelation strin
 			directRelation = relation.Relation
 		case relation.FromRelation != "":
 			// create tuple set for a from relation
-			ts := openfga.TupleToUserset{
-				Tupleset: openfga.ObjectRelation{
-					Relation: &rel.FromRelation,
-				},
-				ComputedUserset: openfga.ObjectRelation{
-					Relation: &rel.Relation,
-				},
-			}
-
-			userset := openfga.Userset{
-				TupleToUserset: &ts,
-			}
-
-			uses = append(uses, userset)
+			uses = append(uses, newTupleUsersetRelation(rel.Relation, rel.FromRelation))
 		default:
 			// create computed userset, which is a relation to another relation
-			uses = append(uses, openfga.Userset{
-				ComputedUserset: &openfga.ObjectRelation{
-					Relation: &rel.Relation,
-				},
-			})
+			uses = append(uses, newComputedUsersetRelation(rel.Relation))
 		}
 	}
 
@@ -308,4 +291,29 @@ func newDirectRelation(role string) openfga.Userset {
 	}
 
 	return us
+}
+
+// newComputedUsersetRelation creates a new computed relation to another relation
+func newComputedUsersetRelation(relation string) openfga.Userset {
+	return openfga.Userset{
+		ComputedUserset: &openfga.ObjectRelation{
+			Relation: &relation,
+		},
+	}
+}
+
+// newTupleUsersetRelation creates a new tuple relation to another relation
+func newTupleUsersetRelation(relation, fromRelation string) openfga.Userset {
+	ts := openfga.TupleToUserset{
+		Tupleset: openfga.ObjectRelation{
+			Relation: &fromRelation,
+		},
+		ComputedUserset: openfga.ObjectRelation{
+			Relation: &relation,
+		},
+	}
+
+	return openfga.Userset{
+		TupleToUserset: &ts,
+	}
 }
