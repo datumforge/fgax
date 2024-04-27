@@ -3,14 +3,12 @@ package fgax
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"os"
 
 	openfga "github.com/openfga/go-sdk"
 	ofgaclient "github.com/openfga/go-sdk/client"
 	language "github.com/openfga/language/pkg/go/transformer"
 	typesystem "github.com/openfga/openfga/pkg/typesystem"
-	"github.com/samber/lo"
 
 	"github.com/pkg/errors"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -60,7 +58,7 @@ func (c *Client) CreateModelFromDSL(ctx context.Context, dsl []byte) (string, er
 	return c.CreateModel(ctx, body)
 }
 
-// CreateModel updates the model and returns the new model ID
+// CreateModel creates a new authorization model and returns the new model ID
 func (c *Client) CreateModel(ctx context.Context, model ofgaclient.ClientWriteAuthorizationModelRequest) (string, error) {
 	resp, err := c.Ofga.WriteAuthorizationModel(ctx).Body(model).Execute()
 	if err != nil {
@@ -96,14 +94,16 @@ type RoleRequest struct {
 	ObjectType string
 }
 
-type RelationCombination struct {
-	// IsUnion is an `or` relation
-	IsUnion bool
-	// IsIntersection is an `and` relation
-	IsIntersection bool
-	// IsDifference is a `not` relation
-	IsDifference bool // TODO: implement
-}
+type RelationCombination string
+
+const (
+	// Union is an `or` relation
+	Union RelationCombination = "union"
+	// Intersection is an `and` relation
+	Intersection RelationCombination = "intersection"
+	// Difference is a `not` relation, currently not supported
+	// Difference RelationCombination = "difference"
+)
 
 type RelationSetting struct {
 	// Relation is the relation to the object
@@ -114,16 +114,12 @@ type RelationSetting struct {
 	FromRelation string
 }
 
-// AddRoleToModel adds a role to the model and returns the new model ID
-func (c *Client) AddRoleToModel(ctx context.Context, r RoleRequest) error {
+// AddOrReplaceRole adds (or replaces the existing) the role to the model and updates the config with the new model id
+func (c *Client) AddOrReplaceRole(ctx context.Context, r RoleRequest) error {
 	// read the latest model
 	model, err := c.Ofga.ReadLatestAuthorizationModel(ctx).Execute()
 	if err != nil {
 		return err
-	}
-
-	if r.RelationCombination.IsUnion && r.RelationCombination.IsIntersection {
-		return errors.New("cannot have both union and intersection") // TODO: error definition
 	}
 
 	// get the model
@@ -133,6 +129,7 @@ func (c *Client) AddRoleToModel(ctx context.Context, r RoleRequest) error {
 	td := m.TypeDefinitions
 
 	addedRole := false
+
 	for i, t := range td {
 		if t.Type == r.ObjectType {
 			// initialize the relation map
@@ -140,7 +137,7 @@ func (c *Client) AddRoleToModel(ctx context.Context, r RoleRequest) error {
 
 			// add the role to the relation map
 			var metadata *openfga.Metadata
-			relations[r.Role], metadata = createNewUserset(r)
+			relations[r.Role], metadata = generateUserset(r)
 
 			// set the relation map and metadata
 			t.SetRelations(relations)
@@ -188,51 +185,77 @@ func (c *Client) AddRoleToModel(ctx context.Context, r RoleRequest) error {
 
 // createNewTypeDefinition creates a new type definition for the model
 func createNewTypeDefinition(r RoleRequest) openfga.TypeDefinition {
-	rel := make(map[string]openfga.Userset)
+	relation := make(map[string]openfga.Userset)
 	td := openfga.TypeDefinition{
 		Type: r.ObjectType,
 	}
 
 	// get all the usersets
-	us, metadata := createNewUserset(r)
+	us, metadata := generateUserset(r)
 
-	rel[r.Role] = us
-	td.Relations = &rel
+	relation[r.Role] = us
+	td.Relations = &relation
 	td.Metadata = metadata
-	fmt.Println(rel)
+
 	return td
 }
 
-func createNewUserset(r RoleRequest) (openfga.Userset, *openfga.Metadata) {
-	// get all the usersets
-	us := openfga.Userset{}
-	metadata := openfga.NewMetadataWithDefaults()
+// generateUserset creates the userset and metadata for the role request
+func generateUserset(r RoleRequest) (us openfga.Userset, metadata *openfga.Metadata) {
+	// create the default metadata
+	metadata = openfga.NewMetadataWithDefaults()
 
-	// place holders to combine the usersets
-	var (
-		// ttus []openfga.TupleToUserset
-		uses []openfga.Userset
-	)
+	// create the usersets and determine if we have a direct relation
+	uses, directRelation := createUsersets(r)
 
-	hasDirect := false
+	// generate the metadata
+	md := createNewMetadata(r.Role, directRelation)
+	metadata.SetRelations(md)
 
+	// now combine the usersets
+	switch r.RelationCombination {
+	case Intersection:
+		us.Intersection = &openfga.Usersets{
+			Child: uses,
+		}
+	case Union:
+		us.Union = &openfga.Usersets{
+			Child: uses,
+		}
+	default:
+		// if we only have one userset, just return it
+		if len(uses) == 1 {
+			us = uses[0]
+		} else { // default to union
+			us.Union = &openfga.Usersets{
+				Child: uses,
+			}
+		}
+	}
+
+	return us, metadata
+}
+
+// createUsersets creates the usersets for the role request and determines if there is a direct relation
+func createUsersets(r RoleRequest) (uses []openfga.Userset, directRelation string) {
 	for _, relation := range r.Relations {
-		if relation.IsDirect {
+		rel := relation
+
+		switch {
+		case relation.IsDirect:
 			// create direct relation
-			relations, md := newDirectRelation(r.Role, relation)
-			// TODO: technically you can have more than one direct, so we need to append later
+			relations := newDirectRelation(r.Role)
 			uses = append(uses, relations)
-			metadata.SetRelations(md)
-			hasDirect = true
-		} else if relation.FromRelation != "" {
-			// create tupleSet
+
+			directRelation = relation.Relation
+		case relation.FromRelation != "":
+			// create tuple set for a from relation
 			ts := openfga.TupleToUserset{
 				Tupleset: openfga.ObjectRelation{
-					Relation: &relation.FromRelation,
+					Relation: &rel.FromRelation,
 				},
 				ComputedUserset: openfga.ObjectRelation{
-					Object:   lo.ToPtr(""),
-					Relation: &relation.Relation,
+					Relation: &rel.Relation,
 				},
 			}
 
@@ -241,40 +264,20 @@ func createNewUserset(r RoleRequest) (openfga.Userset, *openfga.Metadata) {
 			}
 
 			uses = append(uses, userset)
-		} else {
-			// create computedUserset
+		default:
+			// create computed userset, which is a relation to another relation
 			uses = append(uses, openfga.Userset{
 				ComputedUserset: &openfga.ObjectRelation{
-					Object:   lo.ToPtr(""),
-					Relation: &relation.Relation,
+					Relation: &rel.Relation,
 				},
 			})
 		}
-
 	}
 
-	// don't overwrite if we have a direct relation
-	if !hasDirect {
-		md := createNewMetadata(r.Role, "")
-		metadata.SetRelations(md)
-	}
-
-	// now combine the usersets
-	if len(uses) == 1 {
-		us = uses[0]
-	} else if r.RelationCombination.IsIntersection {
-		us.Intersection = &openfga.Usersets{
-			Child: uses,
-		}
-	} else if r.RelationCombination.IsUnion {
-		us.Union = &openfga.Usersets{
-			Child: uses,
-		}
-	}
-
-	return us, metadata
+	return
 }
 
+// createNewMetadata creates a new metadata for the relations
 func createNewMetadata(r string, userType string) map[string]openfga.RelationMetadata {
 	rd := make(map[string]openfga.RelationMetadata)
 	rd[r] = openfga.RelationMetadata{
@@ -289,15 +292,14 @@ func createNewMetadata(r string, userType string) map[string]openfga.RelationMet
 				},
 			},
 		}
-
 	}
 
 	return rd
 }
 
 // newDirectRelation creates a new relation to an existing object
-func newDirectRelation(role string, r RelationSetting) (openfga.Userset, map[string]openfga.RelationMetadata) {
-	// create the userset
+func newDirectRelation(role string) openfga.Userset {
+	// create the user set
 	thisRelation := make(map[string]interface{})
 	thisRelation[role] = typesystem.This()
 
@@ -305,22 +307,5 @@ func newDirectRelation(role string, r RelationSetting) (openfga.Userset, map[str
 		This: &thisRelation,
 	}
 
-	// create the relation metadata, this is required for the relation to be valid
-	rds := createNewMetadata(role, r.Relation)
-
-	return us, rds
+	return us
 }
-
-func getParentUserType() string {
-	return ""
-}
-
-// NOTES:
-
-// computedUserset is a relation 1 relation
-// intersection is a relation 2 relation with an and
-// union is a relation 2 relation with an or
-// direct is a relation to another object type
-// direct requires metadata
-// tupletoUserset is a from relation from another relation
-// once we get all the usersets, we need to combine them into a single userset
