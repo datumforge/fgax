@@ -7,14 +7,14 @@ require (
 	github.com/99designs/gqlgen v0.17.45
 	github.com/Yamashou/gqlgenc v0.22.0
 	github.com/openfga/go-sdk v0.3.5
-	github.com/openfga/openfga v1.5.3
 	github.com/openfga/language/pkg/go v0.0.0-20240429103126-f3e71ca3287d
+	github.com/openfga/openfga v1.5.3
 	github.com/pkg/errors v0.9.1
 	github.com/samber/lo v1.39.0
 	github.com/stoewer/go-strcase v1.3.0
 	github.com/stretchr/testify v1.9.0
 	go.uber.org/zap v1.27.0
-	google.golang.org/protobuf v1.33.0
+	google.golang.org/protobuf v1.34.0
 )
 
 require (
