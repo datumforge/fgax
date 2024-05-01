@@ -51,8 +51,8 @@ import (
                 if ac.ObjectID == "" {
                     ac.ObjectID, _ = gCtx.Args["{{ $idField | ToLower }}"].(string)
                 }
-            
-                // if we still don't have an object id, run the query and grab the object ID 
+
+                // if we still don't have an object id, run the query and grab the object ID
                 // from the result
                 // this happens on join tables where we have the join ID (for updates and deletes)
                 // and not the actual object id
@@ -63,7 +63,7 @@ import (
                     if err != nil {
                         return privacy.Allowf("nil request, bypassing auth check")
                     }
-                    
+
                     ac.ObjectID = ob.{{ $idField }}
                 }
 
@@ -78,7 +78,7 @@ import (
                     return err
                 }
 
-                
+
                 access, err := q.Authz.CheckAccess(ctx, ac)
                 if err != nil {
                     return privacy.Skipf("unable to check access, %s", err.Error())
@@ -113,7 +113,7 @@ import (
                 {{ else }}
                 ac.ObjectID = input.{{ $idField }}
                 {{ end }}
-            } 
+            }
             {{ end }}
 
             // check the id from the args
@@ -130,7 +130,7 @@ import (
                     reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
                     ob, err := m.Client().{{ $name }}.Query().Where({{ $name | ToLower }}.ID(id)).Only(reqCtx)
                     if err != nil {
-                        return privacy.Allowf("nil request, bypassing auth check")
+                        return privacy.Skipf("nil request, skipping auth check")
                     }
 
                     ac.ObjectID = ob.{{ $idField }}
