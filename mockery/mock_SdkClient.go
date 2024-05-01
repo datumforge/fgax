@@ -1085,6 +1085,112 @@ func (_c *MockSdkClient_ListStoresExecute_Call) RunAndReturn(run func(client.Sdk
 	return _c
 }
 
+// ListUsers provides a mock function with given fields: ctx
+func (_m *MockSdkClient) ListUsers(ctx context.Context) client.SdkClientListUsersRequestInterface {
+	ret := _m.Called(ctx)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ListUsers")
+	}
+
+	var r0 client.SdkClientListUsersRequestInterface
+	if rf, ok := ret.Get(0).(func(context.Context) client.SdkClientListUsersRequestInterface); ok {
+		r0 = rf(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(client.SdkClientListUsersRequestInterface)
+		}
+	}
+
+	return r0
+}
+
+// MockSdkClient_ListUsers_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListUsers'
+type MockSdkClient_ListUsers_Call struct {
+	*mock.Call
+}
+
+// ListUsers is a helper method to define mock.On call
+//   - ctx context.Context
+func (_e *MockSdkClient_Expecter) ListUsers(ctx interface{}) *MockSdkClient_ListUsers_Call {
+	return &MockSdkClient_ListUsers_Call{Call: _e.mock.On("ListUsers", ctx)}
+}
+
+func (_c *MockSdkClient_ListUsers_Call) Run(run func(ctx context.Context)) *MockSdkClient_ListUsers_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context))
+	})
+	return _c
+}
+
+func (_c *MockSdkClient_ListUsers_Call) Return(_a0 client.SdkClientListUsersRequestInterface) *MockSdkClient_ListUsers_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *MockSdkClient_ListUsers_Call) RunAndReturn(run func(context.Context) client.SdkClientListUsersRequestInterface) *MockSdkClient_ListUsers_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// ListUsersExecute provides a mock function with given fields: r
+func (_m *MockSdkClient) ListUsersExecute(r client.SdkClientListUsersRequestInterface) (*openfga.ListUsersResponse, error) {
+	ret := _m.Called(r)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ListUsersExecute")
+	}
+
+	var r0 *openfga.ListUsersResponse
+	var r1 error
+	if rf, ok := ret.Get(0).(func(client.SdkClientListUsersRequestInterface) (*openfga.ListUsersResponse, error)); ok {
+		return rf(r)
+	}
+	if rf, ok := ret.Get(0).(func(client.SdkClientListUsersRequestInterface) *openfga.ListUsersResponse); ok {
+		r0 = rf(r)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*openfga.ListUsersResponse)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(client.SdkClientListUsersRequestInterface) error); ok {
+		r1 = rf(r)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockSdkClient_ListUsersExecute_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListUsersExecute'
+type MockSdkClient_ListUsersExecute_Call struct {
+	*mock.Call
+}
+
+// ListUsersExecute is a helper method to define mock.On call
+//   - r client.SdkClientListUsersRequestInterface
+func (_e *MockSdkClient_Expecter) ListUsersExecute(r interface{}) *MockSdkClient_ListUsersExecute_Call {
+	return &MockSdkClient_ListUsersExecute_Call{Call: _e.mock.On("ListUsersExecute", r)}
+}
+
+func (_c *MockSdkClient_ListUsersExecute_Call) Run(run func(r client.SdkClientListUsersRequestInterface)) *MockSdkClient_ListUsersExecute_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(client.SdkClientListUsersRequestInterface))
+	})
+	return _c
+}
+
+func (_c *MockSdkClient_ListUsersExecute_Call) Return(_a0 *openfga.ListUsersResponse, _a1 error) *MockSdkClient_ListUsersExecute_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *MockSdkClient_ListUsersExecute_Call) RunAndReturn(run func(client.SdkClientListUsersRequestInterface) (*openfga.ListUsersResponse, error)) *MockSdkClient_ListUsersExecute_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // Read provides a mock function with given fields: ctx
 func (_m *MockSdkClient) Read(ctx context.Context) client.SdkClientReadRequestInterface {
 	ret := _m.Called(ctx)
