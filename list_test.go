@@ -66,15 +66,28 @@ func Test_ListObjectsRequest(t *testing.T) {
 		name        string
 		relation    string
 		userID      string
+		subjectType string
 		objectType  string
 		expectedRes *ofgaclient.ClientListObjectsResponse
 		errRes      error
 	}{
 		{
-			name:       "happy path",
-			relation:   "can_view",
-			userID:     "ulid-of-user",
-			objectType: "organization",
+			name:        "happy path",
+			relation:    "can_view",
+			userID:      "ulid-of-user",
+			subjectType: "user",
+			objectType:  "organization",
+			expectedRes: &openfga.ListObjectsResponse{
+				Objects: objects,
+			},
+			errRes: nil,
+		},
+		{
+			name:        "happy path, service account",
+			relation:    "can_view",
+			userID:      "ulid-of-token",
+			subjectType: "service",
+			objectType:  "organization",
 			expectedRes: &openfga.ListObjectsResponse{
 				Objects: objects,
 			},
@@ -108,6 +121,7 @@ func Test_ListObjectsRequest(t *testing.T) {
 			resp, err := c.ListObjectsRequest(
 				context.Background(),
 				tc.userID,
+				tc.subjectType,
 				tc.objectType,
 				tc.relation,
 			)

@@ -16,6 +16,8 @@ type AccessCheck struct {
 	Relation string
 	// UserID is the ID of the user making the request
 	UserID string
+	// SubjectType is the type of subject being checked
+	SubjectType string
 }
 
 // CheckTuple checks the openFGA store for provided relationship tuple
@@ -36,8 +38,12 @@ func (c *Client) CheckAccess(ctx context.Context, ac AccessCheck) (bool, error) 
 		return false, err
 	}
 
+	if ac.SubjectType == "" {
+		ac.SubjectType = "user"
+	}
+
 	sub := Entity{
-		Kind:       "user",
+		Kind:       Kind(ac.SubjectType),
 		Identifier: ac.UserID,
 	}
 
@@ -58,24 +64,26 @@ func (c *Client) CheckAccess(ctx context.Context, ac AccessCheck) (bool, error) 
 }
 
 // CheckOrgAccess checks if the user has access to the organization with the given relation
-func (c *Client) CheckOrgAccess(ctx context.Context, userID, orgID, relation string) (bool, error) {
+func (c *Client) CheckOrgAccess(ctx context.Context, userID, subjectType, orgID, relation string) (bool, error) {
 	ac := AccessCheck{
-		ObjectType: "organization",
-		ObjectID:   orgID,
-		Relation:   relation,
-		UserID:     userID,
+		ObjectType:  "organization",
+		ObjectID:    orgID,
+		Relation:    relation,
+		UserID:      userID,
+		SubjectType: subjectType,
 	}
 
 	return c.CheckAccess(ctx, ac)
 }
 
 // CheckGroupAccess checks if the user has access to the group with the given relation
-func (c *Client) CheckGroupAccess(ctx context.Context, userID, groupID, relation string) (bool, error) {
+func (c *Client) CheckGroupAccess(ctx context.Context, userID, subjectType, groupID, relation string) (bool, error) {
 	ac := AccessCheck{
-		ObjectType: "group",
-		ObjectID:   groupID,
-		Relation:   relation,
-		UserID:     userID,
+		ObjectType:  "group",
+		ObjectID:    groupID,
+		Relation:    relation,
+		UserID:      userID,
+		SubjectType: subjectType,
 	}
 
 	return c.CheckAccess(ctx, ac)
@@ -84,10 +92,11 @@ func (c *Client) CheckGroupAccess(ctx context.Context, userID, groupID, relation
 // CheckSystemAdminRole checks if the user has system admin access
 func (c *Client) CheckSystemAdminRole(ctx context.Context, userID string) (bool, error) {
 	ac := AccessCheck{
-		ObjectType: "role",
-		ObjectID:   SystemAdminRole,
-		Relation:   RoleRelation,
-		UserID:     userID,
+		ObjectType:  "role",
+		ObjectID:    SystemAdminRole,
+		Relation:    RoleRelation,
+		UserID:      userID,
+		SubjectType: "user", // admin roles are always user roles, never an API token
 	}
 
 	return c.CheckAccess(ctx, ac)

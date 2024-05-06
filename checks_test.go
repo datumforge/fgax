@@ -85,6 +85,18 @@ func TestCheckAccess(t *testing.T) {
 			wantErr:     false,
 		},
 		{
+			name: "happy path, valid access",
+			ac: AccessCheck{
+				ObjectType:  "organization",
+				ObjectID:    "ulid-of-org",
+				SubjectType: "service",
+				Relation:    "member",
+				UserID:      "ulid-of-token",
+			},
+			expectedRes: true,
+			wantErr:     false,
+		},
+		{
 			name: "missing object type",
 			ac: AccessCheck{
 				ObjectID: "ulid-of-org",
