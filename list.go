@@ -23,10 +23,15 @@ func (c *Client) listObjects(ctx context.Context, req ofgaclient.ClientListObjec
 }
 
 // ListObjectsRequest creates the ClientListObjectsRequest and queries the FGA store for all objects with the user+relation
-func (c *Client) ListObjectsRequest(ctx context.Context, userID, objectType, relation string) (*ofgaclient.ClientListObjectsResponse, error) {
+func (c *Client) ListObjectsRequest(ctx context.Context, subjectID, subjectType, objectType, relation string) (*ofgaclient.ClientListObjectsResponse, error) {
+	// default to user if no subjectType is provided
+	if subjectType == "" {
+		subjectType = "user"
+	}
+
 	sub := Entity{
-		Kind:       "user",
-		Identifier: userID,
+		Kind:       Kind(subjectType),
+		Identifier: subjectID,
 	}
 
 	listReq := ofgaclient.ClientListObjectsRequest{
@@ -36,7 +41,7 @@ func (c *Client) ListObjectsRequest(ctx context.Context, userID, objectType, rel
 		// TODO: Support contextual tuples
 	}
 
-	c.Logger.Infow("listing objects", "relation", "user", sub.String(), relation, "type", objectType)
+	c.Logger.Debugw("listing objects", "relation", subjectType, sub.String(), relation, "type", objectType)
 
 	return c.listObjects(ctx, listReq)
 }
