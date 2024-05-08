@@ -9,8 +9,8 @@ import (
 
 	"entgo.io/ent/privacy"
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/fgax"
-	"github.com/datumforge/fgax/entfga/_examples/basic/auth"
 	"github.com/datumforge/fgax/entfga/_examples/basic/ent/organization"
 	"github.com/datumforge/fgax/entfga/_examples/basic/ent/orgmembership"
 )
@@ -20,8 +20,9 @@ func (q *OrgMembershipQuery) CheckAccess(ctx context.Context) error {
 
 	if gCtx != nil {
 		ac := fgax.AccessCheck{
-			Relation:   fgax.CanView,
-			ObjectType: "organization",
+			Relation:    fgax.CanView,
+			ObjectType:  "organization",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
 		}
 
 		// check id from graphql arg context
@@ -51,7 +52,6 @@ func (q *OrgMembershipQuery) CheckAccess(ctx context.Context) error {
 			if err != nil {
 				return privacy.Allowf("nil request, bypassing auth check")
 			}
-
 			ac.ObjectID = ob.OrganizationID
 		}
 
@@ -82,8 +82,9 @@ func (q *OrgMembershipQuery) CheckAccess(ctx context.Context) error {
 
 func (m *OrgMembershipMutation) CheckAccessForEdit(ctx context.Context) error {
 	ac := fgax.AccessCheck{
-		Relation:   fgax.CanEdit,
-		ObjectType: "organization",
+		Relation:    fgax.CanEdit,
+		ObjectType:  "organization",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 
 	gCtx := graphql.GetFieldContext(ctx)
@@ -95,6 +96,7 @@ func (m *OrgMembershipMutation) CheckAccessForEdit(ctx context.Context) error {
 	input, ok := gInput.(CreateOrgMembershipInput)
 	if ok {
 		ac.ObjectID = input.OrganizationID
+
 	}
 
 	// check the id from the args
@@ -111,9 +113,8 @@ func (m *OrgMembershipMutation) CheckAccessForEdit(ctx context.Context) error {
 			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
 			ob, err := m.Client().OrgMembership.Query().Where(orgmembership.ID(id)).Only(reqCtx)
 			if err != nil {
-				return privacy.Allowf("nil request, bypassing auth check")
+				return privacy.Skipf("nil request, skipping auth check")
 			}
-
 			ac.ObjectID = ob.OrganizationID
 		}
 	}
@@ -150,8 +151,9 @@ func (m *OrgMembershipMutation) CheckAccessForEdit(ctx context.Context) error {
 
 func (m *OrgMembershipMutation) CheckAccessForDelete(ctx context.Context) error {
 	ac := fgax.AccessCheck{
-		Relation:   fgax.CanDelete,
-		ObjectType: "organization",
+		Relation:    fgax.CanDelete,
+		ObjectType:  "organization",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 
 	gCtx := graphql.GetFieldContext(ctx)
@@ -192,8 +194,9 @@ func (q *OrganizationQuery) CheckAccess(ctx context.Context) error {
 
 	if gCtx != nil {
 		ac := fgax.AccessCheck{
-			Relation:   fgax.CanView,
-			ObjectType: "organization",
+			Relation:    fgax.CanView,
+			ObjectType:  "organization",
+			SubjectType: auth.GetAuthzSubjectType(ctx),
 		}
 
 		// check id from graphql arg context
@@ -223,7 +226,6 @@ func (q *OrganizationQuery) CheckAccess(ctx context.Context) error {
 			if err != nil {
 				return privacy.Allowf("nil request, bypassing auth check")
 			}
-
 			ac.ObjectID = ob.ID
 		}
 
@@ -254,8 +256,9 @@ func (q *OrganizationQuery) CheckAccess(ctx context.Context) error {
 
 func (m *OrganizationMutation) CheckAccessForEdit(ctx context.Context) error {
 	ac := fgax.AccessCheck{
-		Relation:   fgax.CanEdit,
-		ObjectType: "organization",
+		Relation:    fgax.CanEdit,
+		ObjectType:  "organization",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 
 	gCtx := graphql.GetFieldContext(ctx)
@@ -274,9 +277,8 @@ func (m *OrganizationMutation) CheckAccessForEdit(ctx context.Context) error {
 			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
 			ob, err := m.Client().Organization.Query().Where(organization.ID(id)).Only(reqCtx)
 			if err != nil {
-				return privacy.Allowf("nil request, bypassing auth check")
+				return privacy.Skipf("nil request, skipping auth check")
 			}
-
 			ac.ObjectID = ob.ID
 		}
 	}
@@ -313,8 +315,9 @@ func (m *OrganizationMutation) CheckAccessForEdit(ctx context.Context) error {
 
 func (m *OrganizationMutation) CheckAccessForDelete(ctx context.Context) error {
 	ac := fgax.AccessCheck{
-		Relation:   fgax.CanDelete,
-		ObjectType: "organization",
+		Relation:    fgax.CanDelete,
+		ObjectType:  "organization",
+		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
 
 	gCtx := graphql.GetFieldContext(ctx)

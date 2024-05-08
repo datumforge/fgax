@@ -18,11 +18,15 @@ type Noder interface {
 	IsNode()
 }
 
-// IsNode implements the Node interface check for GQLGen.
-func (n *OrgMembership) IsNode() {}
+var orgmembershipImplementors = []string{"OrgMembership", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *Organization) IsNode() {}
+func (*OrgMembership) IsNode() {}
+
+var organizationImplementors = []string{"Organization", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*Organization) IsNode() {}
 
 var errNodeInvalidID = &NotFoundError{"node"}
 
@@ -85,27 +89,21 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 	case orgmembership.Table:
 		query := c.OrgMembership.Query().
 			Where(orgmembership.ID(id))
-		query, err := query.CollectFields(ctx, "OrgMembership")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, orgmembershipImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	case organization.Table:
 		query := c.Organization.Query().
 			Where(organization.ID(id))
-		query, err := query.CollectFields(ctx, "Organization")
-		if err != nil {
-			return nil, err
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, organizationImplementors...); err != nil {
+				return nil, err
+			}
 		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
+		return query.Only(ctx)
 	default:
 		return nil, fmt.Errorf("cannot resolve noder from table %q: %w", table, errNodeInvalidID)
 	}
@@ -182,7 +180,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case orgmembership.Table:
 		query := c.OrgMembership.Query().
 			Where(orgmembership.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "OrgMembership")
+		query, err := query.CollectFields(ctx, orgmembershipImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -198,7 +196,7 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 	case organization.Table:
 		query := c.Organization.Query().
 			Where(organization.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "Organization")
+		query, err := query.CollectFields(ctx, organizationImplementors...)
 		if err != nil {
 			return nil, err
 		}

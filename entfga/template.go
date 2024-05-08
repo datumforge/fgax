@@ -42,6 +42,16 @@ func extractNillableIDField(val any) bool {
 	return nillable
 }
 
+// extractOrgOwnedField gets the key that is used for the org owned field
+func extractOrgOwnedField(val any) bool {
+	orgOwned, ok := val.(bool)
+	if !ok {
+		return false
+	}
+
+	return orgOwned
+}
+
 // hasCreateID checks if the input would have the ID to check permissions
 func hasCreateID(val any) bool {
 	idField, ok := val.(string)
@@ -78,6 +88,7 @@ func parseTemplate(name, path string) *gen.Template {
 		"extractObjectType":      extractObjectType,
 		"extractIDField":         extractIDField,
 		"extractNillableIDField": extractNillableIDField,
+		"extractOrgOwnedField":   extractOrgOwnedField,
 		"hasCreateID":            hasCreateID,
 		"extractIncludeHooks":    extractIncludeHooks,
 		"useSoftDeletes":         useSoftDeletes,

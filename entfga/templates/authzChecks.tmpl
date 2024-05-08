@@ -8,11 +8,12 @@
 
 {{/* Add immports so the correct privacy package is imported */}}
 import (
-	"context"
+    "context"
 
-	"github.com/99designs/gqlgen/graphql"
-	"entgo.io/ent/privacy"
-	"github.com/datumforge/fgax"
+    "github.com/99designs/gqlgen/graphql"
+    "entgo.io/ent/privacy"
+    "github.com/datumforge/fgax"
+    "github.com/datumforge/datum/pkg/auth"
 )
 
     {{ range $n := $.Nodes }}
@@ -26,6 +27,7 @@ import (
         {{ $objectType := extractObjectType $n.Annotations.Authz.ObjectType }}
         {{ $idField := extractIDField $n.Annotations.Authz.IDField  }}
         {{ $nillable := extractNillableIDField $n.Annotations.Authz.NillableIDField  }}
+        {{ $orgOwned := extractOrgOwnedField $n.Annotations.Authz.OrgOwnedField  }}
 
         func (q *{{ $querier }}) CheckAccess(ctx context.Context) error {
             gCtx := graphql.GetFieldContext(ctx)
@@ -34,6 +36,7 @@ import (
                 ac := fgax.AccessCheck{
                     Relation: fgax.CanView,
                     ObjectType:  "{{ $objectType | ToLower }}",
+                    SubjectType: auth.GetAuthzSubjectType(ctx),
                 }
 
                 // check id from graphql arg context
@@ -63,7 +66,6 @@ import (
                     if err != nil {
                         return privacy.Allowf("nil request, bypassing auth check")
                     }
-
                     ac.ObjectID = ob.{{ $idField }}
                 }
 
@@ -97,7 +99,17 @@ import (
             ac := fgax.AccessCheck{
                 Relation: fgax.CanEdit,
                 ObjectType:  "{{ $objectType | ToLower }}",
+                SubjectType: auth.GetAuthzSubjectType(ctx),
             }
+
+            {{- if $orgOwned }}
+            orgID, oErr := auth.GetOrganizationIDFromContext(ctx)
+            if oErr != nil {
+                return oErr
+            }
+
+            ac.ObjectID = orgID
+            {{ else }}
 
             gCtx := graphql.GetFieldContext(ctx)
 
@@ -132,10 +144,10 @@ import (
                     if err != nil {
                         return privacy.Skipf("nil request, skipping auth check")
                     }
-
                     ac.ObjectID = ob.{{ $idField }}
                 }
             }
+            {{ end }}
 
             // request is for a list objects, will get filtered in interceptors
             if ac.ObjectID == ""  {
@@ -171,6 +183,7 @@ import (
             ac := fgax.AccessCheck{
                 Relation: fgax.CanDelete,
                 ObjectType:  "{{ $objectType | ToLower }}",
+                SubjectType: auth.GetAuthzSubjectType(ctx),
             }
 
             gCtx := graphql.GetFieldContext(ctx)
