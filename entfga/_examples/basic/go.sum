@@ -38,8 +38,8 @@ github.com/cespare/xxhash/v2 v2.3.0 h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UF
 github.com/cespare/xxhash/v2 v2.3.0/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
 github.com/cpuguy83/go-md2man/v2 v2.0.4 h1:wfIWP927BUkWJb2NmU/kNDYIBTh/ziUX91+lVfRxZq4=
 github.com/cpuguy83/go-md2man/v2 v2.0.4/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
-github.com/datumforge/datum v0.5.0 h1:vGuZ4c+ahi1honnpYmTRBPyrMcK1cl0IAz/aN8n0z0M=
-github.com/datumforge/datum v0.5.0/go.mod h1:iVQoUcg6i6j7SkxFj0Bblpbzi1XQ+1Z9KwK8mCfpBZQ=
+github.com/datumforge/datum v0.5.1 h1:wMOsnC1cdwA2CnKfMlbX9Orktw7uwmo9cKoHTxi4odI=
+github.com/datumforge/datum v0.5.1/go.mod h1:gsT1T6ydMZWlmDxiYewW0pPuq5UhdIs4nvkSdRXwubw=
 github.com/datumforge/echox v0.0.0-20240312185605-fdb5a150410e h1:anHN8Bsa8x80oCYCuC3EC5kY+GO8ymIQOWvgAKZujlo=
 github.com/datumforge/echox v0.0.0-20240312185605-fdb5a150410e/go.mod h1:ZCbNvIShUhAHKlURvgedaGUAghCNZli2I87uLJSPiZ0=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -132,8 +132,8 @@ github.com/openfga/api/proto v0.0.0-20240318145204-66b9e5cb403c h1:2UmuAlvXoZGQR
 github.com/openfga/api/proto v0.0.0-20240318145204-66b9e5cb403c/go.mod h1:5LtWOArDX4FlbcfDvBoJAzDEYJKLz/OEUoi+0S2tyM8=
 github.com/openfga/go-sdk v0.3.6 h1:uvU1Jbg58vfpB8FoMSHeIzuCSu7SkHGVMJLhHE5PbZ0=
 github.com/openfga/go-sdk v0.3.6/go.mod h1:t2iDiGuJtdyjvMHzkxDsbWbCWOLlVMViPKrU7Sau4K8=
-github.com/openfga/language/pkg/go v0.0.0-20240429103126-f3e71ca3287d h1:a8YgRx1RfofFiDbMj/Azwh0UeMbdfUf7OiMqSom/smQ=
-github.com/openfga/language/pkg/go v0.0.0-20240429103126-f3e71ca3287d/go.mod h1:wkI4GcY3yNNuFMU2ncHPWqBaF7XylQTkJYfBi2pIpK8=
+github.com/openfga/language/pkg/go v0.0.0-20240508080213-a861f06327b6 h1:iyNcZojsdGW065vyug95/ojj+Iwt/SEl+DgCNEFYIoA=
+github.com/openfga/language/pkg/go v0.0.0-20240508080213-a861f06327b6/go.mod h1:mCwEY2IQvyNgfEwbfH0C0ERUwtL8z6UjSAF8zgn5Xbg=
 github.com/openfga/openfga v1.5.3 h1:Uynmlsx3iz/eiP7wW9n2dbwxDh/kiS/27W6C24Y7oyY=
 github.com/openfga/openfga v1.5.3/go.mod h1:IcQBDtytjhBxjfJ+1zCzUxQvQa1BB/4Ed+POpZKojTI=
 github.com/pborman/getopt v0.0.0-20170112200414-7148bc3a4c30/go.mod h1:85jBQOZwpVEaDAr341tbn15RS4fCAsIst0qp7i8ex1o=
