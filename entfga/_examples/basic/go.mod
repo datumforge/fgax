@@ -12,7 +12,7 @@ require (
 	github.com/datumforge/datum v0.5.1
 	github.com/datumforge/fgax v0.2.1
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/vektah/gqlparser/v2 v2.5.11
+	github.com/vektah/gqlparser/v2 v2.5.12
 	go.uber.org/zap v1.27.0
 )
 
@@ -54,8 +54,8 @@ require (
 	github.com/natefinch/wrap v0.2.0 // indirect
 	github.com/oklog/ulid/v2 v2.1.0 // indirect
 	github.com/openfga/api/proto v0.0.0-20240318145204-66b9e5cb403c // indirect
-	github.com/openfga/go-sdk v0.3.6 // indirect
-	github.com/openfga/language/pkg/go v0.0.0-20240508080213-a861f06327b6 // indirect
+	github.com/openfga/go-sdk v0.3.7 // indirect
+	github.com/openfga/language/pkg/go v0.0.0-20240513164614-7d0da9bc9c63 // indirect
 	github.com/openfga/openfga v1.5.3 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
