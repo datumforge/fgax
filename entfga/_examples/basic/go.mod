@@ -8,7 +8,7 @@ go 1.22.2
 require (
 	entgo.io/contrib v0.5.0
 	entgo.io/ent v0.13.1
-	github.com/99designs/gqlgen v0.17.46
+	github.com/99designs/gqlgen v0.17.47
 	github.com/datumforge/datum v0.5.2
 	github.com/datumforge/fgax v0.2.1
 	github.com/hashicorp/go-multierror v1.1.1
@@ -66,7 +66,7 @@ require (
 	github.com/redis/go-redis/v9 v9.5.1 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/segmentio/asm v1.2.0 // indirect
-	github.com/sosodev/duration v1.3.0 // indirect
+	github.com/sosodev/duration v1.3.1 // indirect
 	github.com/stoewer/go-strcase v1.3.0 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/stretchr/testify v1.9.0 // indirect
