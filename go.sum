@@ -94,8 +94,8 @@ github.com/openfga/api/proto v0.0.0-20240318145204-66b9e5cb403c h1:2UmuAlvXoZGQR
 github.com/openfga/api/proto v0.0.0-20240318145204-66b9e5cb403c/go.mod h1:5LtWOArDX4FlbcfDvBoJAzDEYJKLz/OEUoi+0S2tyM8=
 github.com/openfga/go-sdk v0.3.7 h1:n3nKU4HXZVWiiSdbE1XDvsvdvly7bN5gy5E3+lt+55s=
 github.com/openfga/go-sdk v0.3.7/go.mod h1:AoMnFlPw65sU/7O4xOPpCb2vXA8ZD9K9xp2hZjcvt4g=
-github.com/openfga/language/pkg/go v0.0.0-20240520084932-9e3bd7a03acb h1:RkuqdGtxlMp5RoHjGzcuN3zn8v6fFLN08AKxTJ6w8WA=
-github.com/openfga/language/pkg/go v0.0.0-20240520084932-9e3bd7a03acb/go.mod h1:mCwEY2IQvyNgfEwbfH0C0ERUwtL8z6UjSAF8zgn5Xbg=
+github.com/openfga/language/pkg/go v0.0.0-20240528115300-9d13292223ee h1:/88VfFcoUa32MG1Nptwrj47F0qbZyTrmy+jB/N1ySws=
+github.com/openfga/language/pkg/go v0.0.0-20240528115300-9d13292223ee/go.mod h1:mCwEY2IQvyNgfEwbfH0C0ERUwtL8z6UjSAF8zgn5Xbg=
 github.com/openfga/openfga v1.5.3 h1:Uynmlsx3iz/eiP7wW9n2dbwxDh/kiS/27W6C24Y7oyY=
 github.com/openfga/openfga v1.5.3/go.mod h1:IcQBDtytjhBxjfJ+1zCzUxQvQa1BB/4Ed+POpZKojTI=
 github.com/pborman/getopt v0.0.0-20170112200414-7148bc3a4c30/go.mod h1:85jBQOZwpVEaDAr341tbn15RS4fCAsIst0qp7i8ex1o=
