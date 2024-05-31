@@ -271,6 +271,53 @@ func (_c *MockSdkClientReadChangesRequestInterface_GetOptions_Call) RunAndReturn
 	return _c
 }
 
+// GetStoreIdOverride provides a mock function with given fields:
+func (_m *MockSdkClientReadChangesRequestInterface) GetStoreIdOverride() *string {
+	ret := _m.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetStoreIdOverride")
+	}
+
+	var r0 *string
+	if rf, ok := ret.Get(0).(func() *string); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*string)
+		}
+	}
+
+	return r0
+}
+
+// MockSdkClientReadChangesRequestInterface_GetStoreIdOverride_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetStoreIdOverride'
+type MockSdkClientReadChangesRequestInterface_GetStoreIdOverride_Call struct {
+	*mock.Call
+}
+
+// GetStoreIdOverride is a helper method to define mock.On call
+func (_e *MockSdkClientReadChangesRequestInterface_Expecter) GetStoreIdOverride() *MockSdkClientReadChangesRequestInterface_GetStoreIdOverride_Call {
+	return &MockSdkClientReadChangesRequestInterface_GetStoreIdOverride_Call{Call: _e.mock.On("GetStoreIdOverride")}
+}
+
+func (_c *MockSdkClientReadChangesRequestInterface_GetStoreIdOverride_Call) Run(run func()) *MockSdkClientReadChangesRequestInterface_GetStoreIdOverride_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *MockSdkClientReadChangesRequestInterface_GetStoreIdOverride_Call) Return(_a0 *string) *MockSdkClientReadChangesRequestInterface_GetStoreIdOverride_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *MockSdkClientReadChangesRequestInterface_GetStoreIdOverride_Call) RunAndReturn(run func() *string) *MockSdkClientReadChangesRequestInterface_GetStoreIdOverride_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // Options provides a mock function with given fields: options
 func (_m *MockSdkClientReadChangesRequestInterface) Options(options client.ClientReadChangesOptions) client.SdkClientReadChangesRequestInterface {
 	ret := _m.Called(options)
