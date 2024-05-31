@@ -58,7 +58,7 @@ omit_gqlgen_version_in_file_notice: true
 # gqlgen will search for any type names in the schema in these go packages
 # if they match it will use them, otherwise it will generate them.
 autobind:
- - "github.com/datumforge/fgax/entfga/_examples/basic/ent"
+  - "github.com/datumforge/fgax/entfga/_examples/basic/ent"
 
 # This section declares type mapping between the GraphQL and go type systems
 #

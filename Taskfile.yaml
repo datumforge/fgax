@@ -1,7 +1,7 @@
 version: '3'
 
 includes:
-  example: 
+  example:
     taskfile: ./entfga/_examples/basic/
     dir: ./entfga/_examples/basic/
 
@@ -14,7 +14,7 @@ tasks:
   go:lint:
     desc: runs golangci-lint, the most annoying opinionated linter ever
     cmds:
-      - golangci-lint run --config=.golangci.yaml --verbose
+      - golangci-lint run --config=.golangci.yaml --verbose --fix
 
   go:test:
     desc: runs and outputs results of created go tests
@@ -47,4 +47,3 @@ tasks:
         echo "$status"
         exit 1
         fi
-  
