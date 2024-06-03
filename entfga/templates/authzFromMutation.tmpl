@@ -12,14 +12,12 @@
     {{ range $n := $.Nodes }}
     {{ $name := $n.Name }}
         {{ $mutator := $n.MutationName }}
-        {{/* Only include nodes with the Authz anntoation. See: Annotation.Name */}}
-        {{ if $n.Annotations.Authz }}
+        {{/* Only include nodes with the Authz annotation with hooks. See: Annotation.Name */}}
+        {{ if and ($n.Annotations.Authz) ($n.Annotations.Authz.IncludeHooks) }}
 
             {{ $objectType := extractObjectType $n.Annotations.Authz.ObjectType }}
             func (m *{{ $mutator }}) CreateTuplesFromCreate(ctx context.Context) error {
                 {{ $includeHooks := extractIncludeHooks $n.Annotations.Authz.IncludeHooks }}
-                {{ if $includeHooks}}
-
                 // Get fields for tuple creation
                 userID, _ := m.UserID()
                 objectID, _ := m.{{ $objectType | ToUpperCamel }}ID()
@@ -36,14 +34,11 @@
 
                 m.Logger.Debugw("created relationship tuples", "relation", role, "object", tuple.Object)
 
-                {{ end }}
-
                 return nil
             }
 
             func (m *{{ $mutator }}) CreateTuplesFromUpdate(ctx context.Context) error {
                 {{ $includeHooks := extractIncludeHooks $n.Annotations.Authz.IncludeHooks }}
-                {{ if $includeHooks}}
 
                 {{- if $softDeletes }}
                 // check for soft delete operation and delete instead
@@ -107,14 +102,11 @@
                     }
                 }
 
-                {{ end }}
-
                 return nil
             }
 
             func (m *{{ $mutator }}) CreateTuplesFromDelete(ctx context.Context) error {
                 {{ $includeHooks := extractIncludeHooks $n.Annotations.Authz.IncludeHooks }}
-                {{ if $includeHooks}}
 
                 {{- if $softDeletes }}
                 // check for soft delete operation and skip so it happens on update
@@ -153,8 +145,6 @@
 
                     m.Logger.Debugw("deleted relationship tuples")
                 }
-
-                {{ end }}
 
                 return nil
             }
