@@ -3,4 +3,4 @@ dir: .
 all: true
 disable-version-string: true
 packages:
-    github.com/openfga/go-sdk/client:
+  github.com/openfga/go-sdk/client:

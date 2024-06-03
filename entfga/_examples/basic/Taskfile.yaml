@@ -17,7 +17,7 @@ tasks:
       - go run ./gen_schema.go
 
   generate:
-    desc: a combination of the ent, graph, and gqlgen tasks which are required to fully generate the necessary graph, server, resolvers, client, etc. 
+    desc: a combination of the ent, graph, and gqlgen tasks which are required to fully generate the necessary graph, server, resolvers, client, etc.
     cmds:
       - task: ent
       - task: gqlgen

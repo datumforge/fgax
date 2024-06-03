@@ -84,21 +84,21 @@ The `privacy` feature **must** be turned on:
 
 In the `ent` schema, provide the following annotation:
 
-```go 
+```go
 // Annotations of the OrgMembership
 func (OrgMembership) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entfga.Annotations{
 			ObjectType:   "organization",
 			IncludeHooks: true,
-			IDField:      "OrganizationID", // Defaults to ID, override to object ID field 
-		}, 
+			IDField:      "OrganizationID", // Defaults to ID, override to object ID field
+		},
 	}
 }
 ```
 
 The `ObjectType` **must** be the same between the ID field name in the schema and the object type in the FGA relationship. In the example above
-the field in the schema is `OrganizationID` and the object in FGA is `organization`. 
+the field in the schema is `OrganizationID` and the object in FGA is `organization`.
 
 If the `ID` field is `Optional()`, you'll need to set `NillableIDField: true,` on the annotation to ensure the `string` value is used instead of the `pointer` on the `CreateInput`.
 
@@ -121,8 +121,8 @@ func (Organization) Annotations() []schema.Annotation {
 
 ## Using Policies
 
-A policy check function will be created per mutation and query type when the annotation is used, these can be set on the policy of the schema. 
-They must be wrapped in the `privacy` `MutationRuleFunc`, as seen the example below: 
+A policy check function will be created per mutation and query type when the annotation is used, these can be set on the policy of the schema.
+They must be wrapped in the `privacy` `MutationRuleFunc`, as seen the example below:
 
 ```go
 // Policy of the Organization
@@ -152,7 +152,7 @@ func (Organization) Policy() ent.Policy {
 
 #### Soft Deletes
 
-If you are using the soft delete mixin provided by [entx](https://github.com/datumforge/datum/blob/authz-hooks/internal/entx/softdeletes.go), add 
+If you are using the soft delete mixin provided by [entx](https://github.com/datumforge/datum/blob/authz-hooks/internal/entx/softdeletes.go), add
 the following option to the extension:
 
 ```go
