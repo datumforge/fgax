@@ -95,6 +95,7 @@ import (
             return privacy.Skip
         }
 
+        {{if $n.Annotations.EntGQL | hasMutationInputSet }}
         func (m *{{ $mutator }}) CheckAccessForEdit(ctx context.Context) error {
             ac := fgax.AccessCheck{
                 Relation: fgax.CanEdit,
@@ -218,6 +219,7 @@ import (
             // deny if it was a mutation is not allowed
             return privacy.Deny
         }
+        {{ end }}
     {{ end }}
     {{ end }}
 {{ end }}
