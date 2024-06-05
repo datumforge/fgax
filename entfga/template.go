@@ -66,6 +66,23 @@ func hasCreateID(val any) bool {
 	return true
 }
 
+// hasMutationInputSet checks if the annotation for MutationInputs is set on the schema
+// this annotation would look like:
+// `entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),`
+// on an ent schema
+func hasMutationInputSet(val any) bool {
+	annotation, ok := val.(map[string]interface{})
+	if !ok {
+		return false
+	}
+
+	if res, ok := annotation["MutationInputs"]; ok && res != nil {
+		return true
+	}
+
+	return false
+}
+
 // extractIncludeHooks gets the key that is used to determine if the hooks should be included
 func extractIncludeHooks(val any) bool {
 	includeHooks, ok := val.(bool)
@@ -90,6 +107,7 @@ func parseTemplate(name, path string) *gen.Template {
 		"extractNillableIDField": extractNillableIDField,
 		"extractOrgOwnedField":   extractOrgOwnedField,
 		"hasCreateID":            hasCreateID,
+		"hasMutationInputSet":    hasMutationInputSet,
 		"extractIncludeHooks":    extractIncludeHooks,
 		"useSoftDeletes":         useSoftDeletes,
 		"ToUpperCamel":           strcase.UpperCamelCase,
