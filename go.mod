@@ -4,7 +4,7 @@ go 1.22.3
 
 require (
 	entgo.io/ent v0.13.1
-	github.com/99designs/gqlgen v0.17.47
+	github.com/99designs/gqlgen v0.17.48
 	github.com/Yamashou/gqlgenc v0.23.1
 	github.com/openfga/go-sdk v0.4.0
 	github.com/openfga/language/pkg/go v0.0.0-20240603163217-f5fc1d6b5f85
