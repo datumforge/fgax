@@ -10,7 +10,7 @@ require (
 	entgo.io/ent v0.13.1
 	github.com/99designs/gqlgen v0.17.48
 	github.com/datumforge/datum v0.6.0
-	github.com/datumforge/fgax v0.2.1
+	github.com/datumforge/fgax v0.3.0
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/vektah/gqlparser/v2 v2.5.12
 	go.uber.org/zap v1.27.0
