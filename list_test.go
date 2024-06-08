@@ -8,11 +8,12 @@ import (
 	openfga "github.com/openfga/go-sdk"
 	ofgaclient "github.com/openfga/go-sdk/client"
 	"github.com/stretchr/testify/assert"
+	"github.com/test-go/testify/require"
 
 	mock_fga "github.com/datumforge/fgax/mockery"
 )
 
-func Test_ListContains(t *testing.T) {
+func TestListContains(t *testing.T) {
 	testCases := []struct {
 		name        string
 		objectID    string
@@ -60,7 +61,7 @@ func Test_ListContains(t *testing.T) {
 	}
 }
 
-func Test_ListObjectsRequest(t *testing.T) {
+func TestListObjectsRequest(t *testing.T) {
 	objects := []string{"organization:datum"}
 	testCases := []struct {
 		name        string
@@ -137,5 +138,54 @@ func Test_ListObjectsRequest(t *testing.T) {
 			assert.NoError(t, err)
 			assert.Equal(t, tc.expectedRes.GetObjects(), resp.GetObjects())
 		})
+	}
+}
+
+func TestGetEntityIDs(t *testing.T) {
+	testCases := []struct {
+		name        string
+		objects     []string
+		expectedIDs []string
+		expectedErr string
+	}{
+		{
+			name:        "happy path",
+			objects:     []string{"organization:datum"},
+			expectedIDs: []string{"datum"},
+		},
+		{
+			name:        "multiple objects",
+			objects:     []string{"organization:datum", "organization:another"},
+			expectedIDs: []string{"datum", "another"},
+		},
+		{
+			name:        "empty objects",
+			objects:     []string{},
+			expectedIDs: []string{},
+		},
+
+		{
+			name:        "invalid object",
+			objects:     []string{"organization"},
+			expectedIDs: []string{},
+			expectedErr: "invalid entity representation: organization",
+		},
+	}
+
+	for _, tc := range testCases {
+		response := &ofgaclient.ClientListObjectsResponse{
+			Objects: tc.objects,
+		}
+
+		ids, err := GetEntityIDs(response)
+		if tc.expectedErr != "" {
+			assert.Error(t, err)
+			assert.Nil(t, ids)
+
+			return
+		}
+
+		require.NoError(t, err)
+		assert.Equal(t, tc.expectedIDs, ids)
 	}
 }
