@@ -31,6 +31,11 @@ const (
 	CanDelete = "can_delete"
 )
 
+const (
+	// default page size open fga max is 100
+	defaultPageSize = 100
+)
+
 type TupleKey struct {
 	Subject  Entity
 	Object   Entity
@@ -192,6 +197,36 @@ func (c *Client) DeleteRelationshipTuple(ctx context.Context, tuples []openfga.T
 	return resp, nil
 }
 
+func (c *Client) getAllTuples(ctx context.Context) ([]openfga.Tuple, error) {
+	var tuples []openfga.Tuple
+
+	opts := ofgaclient.ClientReadOptions{
+		PageSize:          openfga.PtrInt32(defaultPageSize),
+		ContinuationToken: openfga.PtrString(" "),
+	}
+
+	notComplete := true
+
+	for notComplete {
+		resp, err := c.Ofga.Read(ctx).Options(opts).Execute()
+		if err != nil {
+			c.Logger.Errorw("error getting relationship tuples", "error", err.Error())
+
+			return nil, err
+		}
+
+		tuples = append(tuples, resp.GetTuples()...)
+
+		if resp.ContinuationToken == "" {
+			notComplete = false
+		} else {
+			opts.ContinuationToken = &resp.ContinuationToken
+		}
+	}
+
+	return tuples, nil
+}
+
 func (c *Client) DeleteAllObjectRelations(ctx context.Context, object string) error {
 	// validate object is not empty
 	if object == "" {
@@ -203,20 +238,15 @@ func (c *Client) DeleteAllObjectRelations(ctx context.Context, object string) er
 		return newInvalidEntityError(object)
 	}
 
-	// TODO: update page size for pagination
-	opts := ofgaclient.ClientReadOptions{}
-
-	resp, err := c.Ofga.Read(ctx).Options(opts).Execute()
+	tuples, err := c.getAllTuples(ctx)
 	if err != nil {
-		c.Logger.Errorw("error deleting relationship tuples", "error", err.Error())
-
 		return err
 	}
 
 	var tuplesToDelete []openfga.TupleKeyWithoutCondition
 
-	// check all the tuples for the object?
-	for _, t := range resp.GetTuples() {
+	// check all the tuples for the object
+	for _, t := range tuples {
 		if t.Key.Object == object {
 			k := openfga.TupleKeyWithoutCondition{
 				User:     t.Key.User,
