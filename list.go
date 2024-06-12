@@ -64,3 +64,19 @@ func ListContains(entityType string, l []string, i string) bool {
 
 	return false
 }
+
+// GetEntityIDs returns a list of identifiers from a list of objects
+func GetEntityIDs(l *ofgaclient.ClientListObjectsResponse) ([]string, error) {
+	ids := make([]string, 0, len(l.Objects))
+
+	for _, o := range l.Objects {
+		e, err := ParseEntity(o)
+		if err != nil {
+			return nil, err
+		}
+
+		ids = append(ids, e.Identifier)
+	}
+
+	return ids, nil
+}
