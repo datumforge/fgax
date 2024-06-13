@@ -203,20 +203,15 @@ func (c *Client) DeleteAllObjectRelations(ctx context.Context, object string) er
 		return newInvalidEntityError(object)
 	}
 
-	// TODO: update page size for pagination
-	opts := ofgaclient.ClientReadOptions{}
-
-	resp, err := c.Ofga.Read(ctx).Options(opts).Execute()
+	allTuples, err := c.getAllTuples(ctx)
 	if err != nil {
-		c.Logger.Errorw("error deleting relationship tuples", "error", err.Error())
-
 		return err
 	}
 
 	var tuplesToDelete []openfga.TupleKeyWithoutCondition
 
 	// check all the tuples for the object?
-	for _, t := range resp.GetTuples() {
+	for _, t := range allTuples {
 		if t.Key.Object == object {
 			k := openfga.TupleKeyWithoutCondition{
 				User:     t.Key.User,
@@ -231,6 +226,27 @@ func (c *Client) DeleteAllObjectRelations(ctx context.Context, object string) er
 	_, err = c.DeleteRelationshipTuple(ctx, tuplesToDelete)
 
 	return err
+}
+
+func (c *Client) getAllTuples(ctx context.Context) ([]openfga.Tuple, error) {
+	var tuples []openfga.Tuple
+
+	opts := ofgaclient.ClientReadOptions{}
+
+	notComplete := true
+
+	for notComplete {
+		resp, err := c.Ofga.Read(ctx).Options(opts).Execute()
+		if err != nil {
+			c.Logger.Errorw("error getting relationship tuples", "error", err.Error())
+
+			return nil, err
+		}
+
+		tuples = append(tuples, resp.GetTuples()...)
+	}
+
+	return tuples, nil
 }
 
 // GetTupleKey creates a Tuple key with the provided subject, object, and role

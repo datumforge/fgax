@@ -141,6 +141,82 @@ func TestListObjectsRequest(t *testing.T) {
 	}
 }
 
+func TestListUsersRequest(t *testing.T) {
+	users := []openfga.User{
+		{
+			Object: &openfga.FgaObject{
+				Type: "user",
+				Id:   "mitb",
+			},
+		},
+		{
+			Object: &openfga.FgaObject{
+				Type: "user",
+				Id:   "funk",
+			},
+		},
+	}
+
+	testCases := []struct {
+		name        string
+		relation    string
+		objectType  string
+		objectID    string
+		expectedRes *ofgaclient.ClientListUsersResponse
+		errRes      error
+	}{
+		{
+			name:       "happy path",
+			relation:   "can_view",
+			objectType: "organization",
+			objectID:   "ulid-of-object",
+			expectedRes: &openfga.ListUsersResponse{
+				Users: users,
+			},
+			errRes: nil,
+		},
+		{
+			name:        "error response",
+			relation:    "can_view",
+			objectType:  "organization",
+			objectID:    "ulid-of-object1",
+			expectedRes: nil,
+			errRes:      errors.New("boom"), //nolint:goerr113
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			// setup mock client
+			mc := mock_fga.NewMockSdkClient(t)
+
+			c := NewMockFGAClient(t, mc)
+
+			// mock response for input
+			mock_fga.ListUsers(t, mc, users, tc.errRes)
+
+			// do request
+			resp, err := c.ListUserRequest(
+				context.Background(),
+				tc.objectID,
+				tc.objectType,
+				tc.relation,
+			)
+
+			if tc.errRes != nil {
+				assert.Error(t, err)
+				assert.Equal(t, err, tc.errRes)
+				assert.Equal(t, tc.expectedRes, resp)
+
+				return
+			}
+
+			assert.NoError(t, err)
+			assert.Equal(t, tc.expectedRes.GetUsers(), resp.GetUsers())
+		})
+	}
+}
+
 func TestGetEntityIDs(t *testing.T) {
 	testCases := []struct {
 		name        string
