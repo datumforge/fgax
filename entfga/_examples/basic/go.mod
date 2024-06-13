@@ -8,7 +8,7 @@ go 1.22.4
 require (
 	entgo.io/contrib v0.5.0
 	entgo.io/ent v0.13.1
-	github.com/99designs/gqlgen v0.17.48
+	github.com/99designs/gqlgen v0.17.49
 	github.com/datumforge/datum v0.6.2
 	github.com/datumforge/fgax v0.3.1
 	github.com/hashicorp/go-multierror v1.1.1
