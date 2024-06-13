@@ -12,7 +12,7 @@ require (
 	github.com/datumforge/datum v0.6.2
 	github.com/datumforge/fgax v0.3.1
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/vektah/gqlparser/v2 v2.5.14
+	github.com/vektah/gqlparser/v2 v2.5.16
 	go.uber.org/zap v1.27.0
 )
 
