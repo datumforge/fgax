@@ -6,7 +6,7 @@ require (
 	entgo.io/ent v0.13.1
 	github.com/99designs/gqlgen v0.17.49
 	github.com/Yamashou/gqlgenc v0.23.1
-	github.com/openfga/go-sdk v0.4.0
+	github.com/openfga/go-sdk v0.5.0
 	github.com/openfga/language/pkg/go v0.0.0-20240611203201-b6bbf9c4bb3a
 	github.com/openfga/openfga v1.5.4
 	github.com/pkg/errors v0.9.1
