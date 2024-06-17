@@ -8,8 +8,8 @@ go 1.22.4
 require (
 	entgo.io/contrib v0.5.0
 	entgo.io/ent v0.13.1
-	github.com/99designs/gqlgen v0.17.48
-	github.com/datumforge/datum v0.6.2
+	github.com/99designs/gqlgen v0.17.49
+	github.com/datumforge/datum v0.6.6
 	github.com/datumforge/fgax v0.3.1
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/vektah/gqlparser/v2 v2.5.16
@@ -95,7 +95,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.27.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/crypto v0.24.0 // indirect
-	golang.org/x/exp v0.0.0-20240604190554-fc45aab8b7f8 // indirect
+	golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8 // indirect
 	golang.org/x/mod v0.18.0 // indirect
 	golang.org/x/net v0.26.0 // indirect
 	golang.org/x/oauth2 v0.21.0 // indirect
