@@ -1,6 +1,6 @@
 module github.com/datumforge/fgax
 
-go 1.22.3
+go 1.22.4
 
 require (
 	entgo.io/ent v0.13.1
@@ -8,7 +8,7 @@ require (
 	github.com/Yamashou/gqlgenc v0.23.1
 	github.com/openfga/go-sdk v0.5.0
 	github.com/openfga/language/pkg/go v0.0.0-20240611203201-b6bbf9c4bb3a
-	github.com/openfga/openfga v1.5.4
+	github.com/openfga/openfga v1.5.5
 	github.com/pkg/errors v0.9.1
 	github.com/samber/lo v1.39.0
 	github.com/stoewer/go-strcase v1.3.0
@@ -48,7 +48,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/natefinch/wrap v0.2.0 // indirect
 	github.com/oklog/ulid/v2 v2.1.0 // indirect
-	github.com/openfga/api/proto v0.0.0-20240529184453-5b0b4941f3e0 // indirect
+	github.com/openfga/api/proto v0.0.0-20240612172407-db6f98774490 // indirect
 	github.com/pelletier/go-toml/v2 v2.1.1 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/prometheus/client_golang v1.19.0 // indirect
@@ -70,9 +70,9 @@ require (
 	github.com/vektah/gqlparser/v2 v2.5.16 // indirect
 	github.com/xrash/smetrics v0.0.0-20240312152122-5f08fbb34913 // indirect
 	github.com/zclconf/go-cty v1.14.1 // indirect
-	go.opentelemetry.io/otel v1.25.0 // indirect
-	go.opentelemetry.io/otel/metric v1.25.0 // indirect
-	go.opentelemetry.io/otel/trace v1.25.0 // indirect
+	go.opentelemetry.io/otel v1.26.0 // indirect
+	go.opentelemetry.io/otel/metric v1.26.0 // indirect
+	go.opentelemetry.io/otel/trace v1.26.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/exp v0.0.0-20240409090435-93d18d7e34b8 // indirect
 	golang.org/x/mod v0.18.0 // indirect
