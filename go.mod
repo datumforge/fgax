@@ -13,7 +13,6 @@ require (
 	github.com/samber/lo v1.39.0
 	github.com/stoewer/go-strcase v1.3.0
 	github.com/stretchr/testify v1.9.0
-	github.com/test-go/testify v1.1.4
 	go.uber.org/zap v1.27.0
 	google.golang.org/protobuf v1.34.2
 )

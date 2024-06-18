@@ -8,7 +8,7 @@ import (
 	openfga "github.com/openfga/go-sdk"
 	ofgaclient "github.com/openfga/go-sdk/client"
 	"github.com/stretchr/testify/assert"
-	"github.com/test-go/testify/require"
+	"github.com/stretchr/testify/require"
 
 	mock_fga "github.com/datumforge/fgax/mockery"
 )
@@ -137,6 +137,82 @@ func TestListObjectsRequest(t *testing.T) {
 
 			assert.NoError(t, err)
 			assert.Equal(t, tc.expectedRes.GetObjects(), resp.GetObjects())
+		})
+	}
+}
+
+func TestListUsersRequest(t *testing.T) {
+	users := []openfga.User{
+		{
+			Object: &openfga.FgaObject{
+				Type: "user",
+				Id:   "mitb",
+			},
+		},
+		{
+			Object: &openfga.FgaObject{
+				Type: "user",
+				Id:   "funk",
+			},
+		},
+	}
+
+	testCases := []struct {
+		name        string
+		relation    string
+		objectType  string
+		objectID    string
+		expectedRes *ofgaclient.ClientListUsersResponse
+		errRes      error
+	}{
+		{
+			name:       "happy path",
+			relation:   "can_view",
+			objectType: "organization",
+			objectID:   "ulid-of-object",
+			expectedRes: &openfga.ListUsersResponse{
+				Users: users,
+			},
+			errRes: nil,
+		},
+		{
+			name:        "error response",
+			relation:    "can_view",
+			objectType:  "organization",
+			objectID:    "ulid-of-object1",
+			expectedRes: nil,
+			errRes:      errors.New("boom"), //nolint:goerr113
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			// setup mock client
+			mc := mock_fga.NewMockSdkClient(t)
+
+			c := NewMockFGAClient(t, mc)
+
+			// mock response for input
+			mock_fga.ListUsers(t, mc, users, tc.errRes)
+
+			// do request
+			resp, err := c.ListUserRequest(
+				context.Background(),
+				tc.objectID,
+				tc.objectType,
+				tc.relation,
+			)
+
+			if tc.errRes != nil {
+				assert.Error(t, err)
+				assert.Equal(t, err, tc.errRes)
+				assert.Equal(t, tc.expectedRes, resp)
+
+				return
+			}
+
+			assert.NoError(t, err)
+			assert.Equal(t, tc.expectedRes.GetUsers(), resp.GetUsers())
 		})
 	}
 }

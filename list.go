@@ -3,6 +3,7 @@ package fgax
 import (
 	"context"
 
+	fgasdk "github.com/openfga/go-sdk"
 	ofgaclient "github.com/openfga/go-sdk/client"
 )
 
@@ -44,6 +45,40 @@ func (c *Client) ListObjectsRequest(ctx context.Context, subjectID, subjectType,
 	c.Logger.Debugw("listing objects", "relation", subjectType, sub.String(), relation, "type", objectType)
 
 	return c.listObjects(ctx, listReq)
+}
+
+// listUsers checks the openFGA store for all users associated with a object+relation
+func (c *Client) listUsers(ctx context.Context, req ofgaclient.ClientListUsersRequest) (*ofgaclient.ClientListUsersResponse, error) {
+	list, err := c.Ofga.ListUsers(ctx).Body(req).Execute()
+	if err != nil {
+		c.Logger.Errorw("error listing users",
+			"object", req.Object.Id,
+			"type", req.Object.Type,
+			"relation", req.Relation,
+			"error", err.Error())
+
+		return nil, err
+	}
+
+	return list, nil
+}
+
+// ListUserRequest creates the ClientListUserRequest and queries the FGA store for all users with the object+relation
+func (c *Client) ListUserRequest(ctx context.Context, objectID, objectType, relation string) (*ofgaclient.ClientListUsersResponse, error) {
+	obj := fgasdk.FgaObject{
+		Type: objectType,
+		Id:   objectID,
+	}
+
+	listReq := ofgaclient.ClientListUsersRequest{
+		Object:   obj,
+		Relation: relation,
+		// TODO: Support contextual tuples
+	}
+
+	c.Logger.Debugw("listing users", "relation", relation, "object", obj.Id, "type", obj.Type)
+
+	return c.listUsers(ctx, listReq)
 }
 
 // ListContains checks the results of an fga ListObjects and parses the entities
