@@ -34,6 +34,8 @@ const (
 const (
 	// default page size open fga max is 100
 	defaultPageSize = 100
+	// Writes default size is 10
+	defaultSize = 10
 )
 
 type TupleKey struct {
@@ -258,7 +260,19 @@ func (c *Client) DeleteAllObjectRelations(ctx context.Context, object string) er
 	}
 
 	// Notes: Writes only allow 10 tuples per call, this will need to be fixed
-	_, err = c.DeleteRelationshipTuple(ctx, tuplesToDelete)
+	// _, err = c.DeleteRelationshipTuple(ctx, tuplesToDelete)
+
+	for i := 0; i < len(tuplesToDelete); i += defaultSize {
+		end := i + defaultSize
+		if end > len(tuplesToDelete) {
+			end = len(tuplesToDelete)
+		}
+		allTuples := tuplesToDelete[i:end]
+		_, err := c.DeleteRelationshipTuple(ctx, allTuples)
+		if err != nil {
+			return err
+		}
+	}
 
 	return err
 }
