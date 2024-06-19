@@ -263,12 +263,14 @@ func (c *Client) DeleteAllObjectRelations(ctx context.Context, object string) er
 	// Notes: Writes only allow 10 tuples per call, this will need to be fixed
 	// _, err = c.DeleteRelationshipTuple(ctx, tuplesToDelete)
 
-	for i := 0; i < len(tuplesToDelete); i += defaultSize {
-		end := i + defaultSize
+	for i := 0; i < len(tuplesToDelete); i += maxWrites {
+		end := i + maxWrites
 		if end > len(tuplesToDelete) {
 			end = len(tuplesToDelete)
 		}
+
 		allTuples := tuplesToDelete[i:end]
+
 		if _, err := c.DeleteRelationshipTuple(ctx, allTuples); err != nil {
 			return err
 		}
