@@ -34,8 +34,9 @@ const (
 const (
 	// default page size open fga max is 100
 	defaultPageSize = 100
-	// Writes default size is 10
-	defaultSize = 10
+	// maxWrites is the maximum number of Writes and Deletes supported by the OpenFGA transactional write api
+	// see https://openfga.dev/docs/interacting/transactional-writes for more details
+	maxWrites = 10
 )
 
 type TupleKey struct {
