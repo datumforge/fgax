@@ -420,7 +420,7 @@ func Test_DeleteRelationshipTuple(t *testing.T) {
 			object:            "",
 			relation:          "member",
 			expectedRes:       "",
-			numTuplesToDelete: 13,
+			numTuplesToDelete: 1,
 			errRes:            "Reason: invalid 'object' field format",
 		},
 	}
