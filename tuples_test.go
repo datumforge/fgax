@@ -412,7 +412,7 @@ func Test_DeleteRelationshipTuple(t *testing.T) {
 			object:            "organization:datum",
 			relation:          "",
 			expectedRes:       "",
-			numTuplesToDelete: 30,
+			numTuplesToDelete: 1,
 			errRes:            "Reason: the 'relation' field is malformed",
 		},
 		{
