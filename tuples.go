@@ -269,8 +269,7 @@ func (c *Client) DeleteAllObjectRelations(ctx context.Context, object string) er
 			end = len(tuplesToDelete)
 		}
 		allTuples := tuplesToDelete[i:end]
-		_, err := c.DeleteRelationshipTuple(ctx, allTuples)
-		if err != nil {
+		if _, err := c.DeleteRelationshipTuple(ctx, allTuples); err != nil {
 			return err
 		}
 	}
