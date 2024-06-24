@@ -273,7 +273,7 @@ func (c *Client) DeleteAllObjectRelations(ctx context.Context, object string) er
 		}
 	}
 
-	return err
+	return nil
 }
 
 // GetTupleKey creates a Tuple key with the provided subject, object, and role
