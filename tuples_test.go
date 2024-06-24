@@ -429,13 +429,6 @@ func Test_DeleteRelationshipTuple(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(c)
 
-			/*tuples := []openfga.TupleKeyWithoutCondition{
-				{
-					User:     "user:ulid-of-member",
-					Relation: tc.relation,
-					Object:   tc.object,
-				},
-			}*/
 			tuples := []openfga.TupleKeyWithoutCondition{}
 
 			for i := range tc.numTuplesToDelete {
