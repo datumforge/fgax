@@ -2,6 +2,7 @@ package fgax
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	openfga "github.com/openfga/go-sdk"
@@ -391,32 +392,36 @@ func Test_DeleteRelationshipTuple(t *testing.T) {
 	fc := NewMockFGAClient(t, c)
 
 	testCases := []struct {
-		name        string
-		relation    string
-		object      string
-		expectedRes string
-		errRes      string
+		name              string
+		relation          string
+		object            string
+		expectedRes       string
+		errRes            string
+		numTuplesToDelete int
 	}{
 		{
-			name:        "happy path with relation",
-			object:      "organization:datum",
-			relation:    "member",
-			expectedRes: "",
-			errRes:      "",
+			name:              "happy path with relation",
+			object:            "organization:datum",
+			relation:          "member",
+			expectedRes:       "",
+			numTuplesToDelete: 12,
+			errRes:            "",
 		},
 		{
-			name:        "error, missing relation",
-			object:      "organization:datum",
-			relation:    "",
-			expectedRes: "",
-			errRes:      "Reason: the 'relation' field is malformed",
+			name:              "error, missing relation",
+			object:            "organization:datum",
+			relation:          "",
+			expectedRes:       "",
+			numTuplesToDelete: 1,
+			errRes:            "Reason: the 'relation' field is malformed",
 		},
 		{
-			name:        "error, missing object",
-			object:      "",
-			relation:    "member",
-			expectedRes: "",
-			errRes:      "Reason: invalid 'object' field format",
+			name:              "error, missing object",
+			object:            "",
+			relation:          "member",
+			expectedRes:       "",
+			numTuplesToDelete: 1,
+			errRes:            "Reason: invalid 'object' field format",
 		},
 	}
 
@@ -424,12 +429,14 @@ func Test_DeleteRelationshipTuple(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			defer mock_fga.ClearMocks(c)
 
-			tuples := []openfga.TupleKeyWithoutCondition{
-				{
-					User:     "user:ulid-of-member",
+			tuples := []openfga.TupleKeyWithoutCondition{}
+
+			for i := range tc.numTuplesToDelete {
+				tuples = append(tuples, openfga.TupleKeyWithoutCondition{
+					User:     fmt.Sprintf("user:ulid-of-member-%d", i),
 					Relation: tc.relation,
 					Object:   tc.object,
-				},
+				})
 			}
 
 			mock_fga.DeleteAny(t, c, tc.errRes)

@@ -34,6 +34,9 @@ const (
 const (
 	// default page size open fga max is 100
 	defaultPageSize = 100
+	// maxWrites is the maximum number of Writes and Deletes supported by the OpenFGA transactional write api
+	// see https://openfga.dev/docs/interacting/transactional-writes for more details
+	maxWrites = 10
 )
 
 type TupleKey struct {
@@ -257,10 +260,20 @@ func (c *Client) DeleteAllObjectRelations(ctx context.Context, object string) er
 		}
 	}
 
-	// Notes: Writes only allow 10 tuples per call, this will need to be fixed
-	_, err = c.DeleteRelationshipTuple(ctx, tuplesToDelete)
+	for i := 0; i < len(tuplesToDelete); i += maxWrites {
+		end := i + maxWrites
+		if end > len(tuplesToDelete) {
+			end = len(tuplesToDelete)
+		}
 
-	return err
+		allTuples := tuplesToDelete[i:end]
+
+		if _, err := c.DeleteRelationshipTuple(ctx, allTuples); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // GetTupleKey creates a Tuple key with the provided subject, object, and role
