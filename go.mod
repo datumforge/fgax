@@ -10,7 +10,7 @@ require (
 	github.com/openfga/language/pkg/go v0.0.0-20240611203201-b6bbf9c4bb3a
 	github.com/openfga/openfga v1.5.5
 	github.com/pkg/errors v0.9.1
-	github.com/samber/lo v1.39.0
+	github.com/samber/lo v1.40.0
 	github.com/stoewer/go-strcase v1.3.0
 	github.com/stretchr/testify v1.9.0
 	go.uber.org/zap v1.27.0
