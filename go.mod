@@ -8,7 +8,7 @@ require (
 	github.com/Yamashou/gqlgenc v0.23.2
 	github.com/openfga/go-sdk v0.5.0
 	github.com/openfga/language/pkg/go v0.0.0-20240611203201-b6bbf9c4bb3a
-	github.com/openfga/openfga v1.5.6-0.20240705162924-869f2eb642c4
+	github.com/openfga/openfga v1.5.6-0.20240708180223-cace22d845ff
 	github.com/pkg/errors v0.9.1
 	github.com/samber/lo v1.44.0
 	github.com/stoewer/go-strcase v1.3.0
