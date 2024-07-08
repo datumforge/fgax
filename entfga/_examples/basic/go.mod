@@ -3,13 +3,13 @@ module github.com/datumforge/fgax/entfga/_examples/basic
 // use local copy of repo
 replace github.com/datumforge/fgax => ../../../../fgax
 
-go 1.22.4
+go 1.22.5
 
 require (
 	entgo.io/contrib v0.5.0
 	entgo.io/ent v0.13.1
 	github.com/99designs/gqlgen v0.17.49
-	github.com/datumforge/datum v0.7.1
+	github.com/datumforge/datum v0.7.2
 	github.com/datumforge/fgax v0.3.3
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/vektah/gqlparser/v2 v2.5.16
