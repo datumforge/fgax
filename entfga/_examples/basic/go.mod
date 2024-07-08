@@ -3,7 +3,7 @@ module github.com/datumforge/fgax/entfga/_examples/basic
 // use local copy of repo
 replace github.com/datumforge/fgax => ../../../../fgax
 
-go 1.22.4
+go 1.22.5
 
 require (
 	entgo.io/contrib v0.5.0
