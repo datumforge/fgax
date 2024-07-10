@@ -8,7 +8,7 @@ require (
 	github.com/Yamashou/gqlgenc v0.23.2
 	github.com/openfga/go-sdk v0.5.0
 	github.com/openfga/language/pkg/go v0.0.0-20240611203201-b6bbf9c4bb3a
-	github.com/openfga/openfga v1.5.6-0.20240709185413-06e3aa9b4115
+	github.com/openfga/openfga v1.5.6-0.20240710145808-acfb805266e5
 	github.com/pkg/errors v0.9.1
 	github.com/samber/lo v1.44.0
 	github.com/stoewer/go-strcase v1.3.0
@@ -75,14 +75,14 @@ require (
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/exp v0.0.0-20240409090435-93d18d7e34b8 // indirect
 	golang.org/x/mod v0.18.0 // indirect
-	golang.org/x/net v0.26.0 // indirect
+	golang.org/x/net v0.27.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect
-	golang.org/x/sys v0.21.0 // indirect
+	golang.org/x/sys v0.22.0 // indirect
 	golang.org/x/text v0.16.0 // indirect
 	golang.org/x/tools v0.22.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240528184218-531527333157 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240528184218-531527333157 // indirect
-	google.golang.org/grpc v1.64.1 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240709173604-40e1e62336c5 // indirect
+	google.golang.org/grpc v1.65.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
