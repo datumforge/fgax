@@ -105,8 +105,25 @@ import (
 
             {{- if $orgOwned }}
             orgID, oErr := auth.GetOrganizationIDFromContext(ctx)
-            if oErr != nil {
-                return oErr
+
+            // if we still don't have an object id, run the query and grab the object ID
+            // from the result
+            // this happens when using a personal access token since it is authorized for multiple orgs
+            if orgID == ""  || oErr != nil {
+                id, _ := m.ID()
+
+                if id != "" {
+                    // allow this query to run
+                    reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
+                    ob, err := m.Client().{{ $name }}.Get(reqCtx, id)
+                    if err != nil {
+                        m.Logger.Debugw("error getting object", "error", err)
+
+                        return err
+                    }
+
+                    orgID = ob.{{ $idField }}
+                }
             }
 
             ac.ObjectID = orgID
