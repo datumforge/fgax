@@ -50,11 +50,11 @@ func (OrgMembership) Edges() []ent.Edge {
 func (OrgMembership) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
-
 		entfga.Annotations{
-			ObjectType:   "organization",
-			IncludeHooks: true,
-			IDField:      "OrganizationID",
+			ObjectType:    "organization",
+			IncludeHooks:  true,
+			OrgOwnedField: true,
+			IDField:       "OrganizationID",
 		},
 	}
 }

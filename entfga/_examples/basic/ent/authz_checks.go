@@ -12,7 +12,6 @@ import (
 	"github.com/datumforge/datum/pkg/auth"
 	"github.com/datumforge/fgax"
 	"github.com/datumforge/fgax/entfga/_examples/basic/ent/organization"
-	"github.com/datumforge/fgax/entfga/_examples/basic/ent/orgmembership"
 )
 
 func (q *OrgMembershipQuery) CheckAccess(ctx context.Context) error {
@@ -86,38 +85,29 @@ func (m *OrgMembershipMutation) CheckAccessForEdit(ctx context.Context) error {
 		ObjectType:  "organization",
 		SubjectType: auth.GetAuthzSubjectType(ctx),
 	}
+	orgID, oErr := auth.GetOrganizationIDFromContext(ctx)
 
-	gCtx := graphql.GetFieldContext(ctx)
+	// if we still don't have an object id, run the query and grab the object ID
+	// from the result
+	// this happens when using a personal access token since it is authorized for multiple orgs
+	if orgID == "" || oErr != nil {
+		id, _ := m.ID()
 
-	// get the input from the context
-	gInput := gCtx.Args["input"]
-
-	// check if the input is a CreateOrgMembershipInput
-	input, ok := gInput.(CreateOrgMembershipInput)
-	if ok {
-		ac.ObjectID = input.OrganizationID
-
-	}
-
-	// check the id from the args
-	if ac.ObjectID == "" {
-		ac.ObjectID, _ = gCtx.Args["organizationid"].(string)
-	}
-
-	// if this is still empty, we need to query the object to get the object id
-	// this happens on join tables where we have the join ID (for updates and deletes)
-	if ac.ObjectID == "" && "id" != "organizationid" {
-		id, ok := gCtx.Args["id"].(string)
-		if ok {
+		if id != "" {
 			// allow this query to run
 			reqCtx := privacy.DecisionContext(ctx, privacy.Allow)
-			ob, err := m.Client().OrgMembership.Query().Where(orgmembership.ID(id)).Only(reqCtx)
+			ob, err := m.Client().OrgMembership.Get(reqCtx, id)
 			if err != nil {
-				return privacy.Skipf("nil request, skipping auth check")
+				m.Logger.Debugw("error getting object", "error", err)
+
+				return err
 			}
-			ac.ObjectID = ob.OrganizationID
+
+			orgID = ob.OrganizationID
 		}
 	}
+
+	ac.ObjectID = orgID
 
 	// request is for a list objects, will get filtered in interceptors
 	if ac.ObjectID == "" {

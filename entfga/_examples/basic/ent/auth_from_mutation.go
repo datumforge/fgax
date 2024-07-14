@@ -127,18 +127,3 @@ func (m *OrgMembershipMutation) CreateTuplesFromDelete(ctx context.Context) erro
 
 	return nil
 }
-
-func (m *OrganizationMutation) CreateTuplesFromCreate(ctx context.Context) error {
-
-	return nil
-}
-
-func (m *OrganizationMutation) CreateTuplesFromUpdate(ctx context.Context) error {
-
-	return nil
-}
-
-func (m *OrganizationMutation) CreateTuplesFromDelete(ctx context.Context) error {
-
-	return nil
-}
