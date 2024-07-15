@@ -8,7 +8,7 @@ require (
 	github.com/Yamashou/gqlgenc v0.23.2
 	github.com/openfga/go-sdk v0.5.0
 	github.com/openfga/language/pkg/go v0.0.0-20240611203201-b6bbf9c4bb3a
-	github.com/openfga/openfga v1.5.6-0.20240712201354-518606928ded
+	github.com/openfga/openfga v1.5.6-0.20240715145607-b6238a30f677
 	github.com/pkg/errors v0.9.1
 	github.com/samber/lo v1.45.0
 	github.com/stoewer/go-strcase v1.3.0
@@ -27,6 +27,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.4 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
+	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/envoyproxy/protoc-gen-validate v1.0.4 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/go-logr/logr v1.4.1 // indirect
