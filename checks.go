@@ -6,6 +6,10 @@ import (
 	ofgaclient "github.com/openfga/go-sdk/client"
 )
 
+const (
+	defaultSubjectType = "user"
+)
+
 // AccessCheck is a struct to hold the information needed to check access
 type AccessCheck struct {
 	// ObjectType is the type of object being checked
@@ -39,7 +43,7 @@ func (c *Client) CheckAccess(ctx context.Context, ac AccessCheck) (bool, error) 
 	}
 
 	if ac.SubjectType == "" {
-		ac.SubjectType = "user"
+		ac.SubjectType = defaultSubjectType
 	}
 
 	sub := Entity{

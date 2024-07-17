@@ -4,6 +4,7 @@ import (
 	"context"
 
 	fgasdk "github.com/openfga/go-sdk"
+	openfga "github.com/openfga/go-sdk"
 	ofgaclient "github.com/openfga/go-sdk/client"
 )
 
@@ -63,20 +64,40 @@ func (c *Client) listUsers(ctx context.Context, req ofgaclient.ClientListUsersRe
 	return list, nil
 }
 
+// ListUserRequest is the fields needed to list users
+type ListUserRequest struct {
+	// ObjectID is the identifier of the object that the subject is related to
+	ObjectID string
+	// ObjectType is the type of object that the subject is related to
+	ObjectType string
+	// Relation is the relationship between the subject and object
+	Relation string
+	// UserTypeFilter is the type of user to filter by, by default it is "user"
+	UserTypeFilter string
+}
+
 // ListUserRequest creates the ClientListUserRequest and queries the FGA store for all users with the object+relation
-func (c *Client) ListUserRequest(ctx context.Context, objectID, objectType, relation string) (*ofgaclient.ClientListUsersResponse, error) {
+func (c *Client) ListUserRequest(ctx context.Context, l ListUserRequest) (*ofgaclient.ClientListUsersResponse, error) {
+	// create the fga object
 	obj := fgasdk.FgaObject{
-		Type: objectType,
-		Id:   objectID,
+		Type: l.ObjectType,
+		Id:   l.ObjectID,
 	}
 
+	// default to user if no subjectType is provided
+	if l.UserTypeFilter == "" {
+		l.UserTypeFilter = defaultSubjectType
+	}
+
+	// compose the list request
 	listReq := ofgaclient.ClientListUsersRequest{
-		Object:   obj,
-		Relation: relation,
+		Object:      obj,
+		Relation:    l.Relation,
+		UserFilters: []openfga.UserTypeFilter{{Type: l.UserTypeFilter}},
 		// TODO: Support contextual tuples
 	}
 
-	c.Logger.Debugw("listing users", "relation", relation, "object", obj.Id, "type", obj.Type)
+	c.Logger.Debugw("listing users", "relation", l.Relation, "object", obj.Id, "type", obj.Type)
 
 	return c.listUsers(ctx, listReq)
 }
