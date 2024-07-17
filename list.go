@@ -4,7 +4,6 @@ import (
 	"context"
 
 	fgasdk "github.com/openfga/go-sdk"
-	openfga "github.com/openfga/go-sdk"
 	ofgaclient "github.com/openfga/go-sdk/client"
 )
 
@@ -93,7 +92,7 @@ func (c *Client) ListUserRequest(ctx context.Context, l ListUserRequest) (*ofgac
 	listReq := ofgaclient.ClientListUsersRequest{
 		Object:      obj,
 		Relation:    l.Relation,
-		UserFilters: []openfga.UserTypeFilter{{Type: l.UserTypeFilter}},
+		UserFilters: []fgasdk.UserTypeFilter{{Type: l.UserTypeFilter}},
 		// TODO: Support contextual tuples
 	}
 

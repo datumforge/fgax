@@ -100,7 +100,7 @@ func TestListObjectsRequest(t *testing.T) {
 			userID:      "ulid-of-user",
 			objectType:  "organization",
 			expectedRes: nil,
-			errRes:      errors.New("boom"), //nolint:goerr113
+			errRes:      errors.New("boom"), //nolint:err113
 		},
 	}
 
@@ -181,7 +181,7 @@ func TestListUsersRequest(t *testing.T) {
 			objectType:  "organization",
 			objectID:    "ulid-of-object1",
 			expectedRes: nil,
-			errRes:      errors.New("boom"), //nolint:goerr113
+			errRes:      errors.New("boom"), //nolint:err113
 		},
 	}
 
@@ -195,12 +195,16 @@ func TestListUsersRequest(t *testing.T) {
 			// mock response for input
 			mock_fga.ListUsers(t, mc, users, tc.errRes)
 
+			req := ListUserRequest{
+				ObjectID:   tc.objectID,
+				ObjectType: tc.objectType,
+				Relation:   tc.relation,
+			}
+
 			// do request
 			resp, err := c.ListUserRequest(
 				context.Background(),
-				tc.objectID,
-				tc.objectType,
-				tc.relation,
+				req,
 			)
 
 			if tc.errRes != nil {
