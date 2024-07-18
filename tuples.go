@@ -192,8 +192,8 @@ func (c *Client) WriteTupleKeys(ctx context.Context, writes []TupleKey, deletes 
 	return resp, nil
 }
 
-// DeleteRelationshipTuple deletes a relationship tuple in the openFGA store
-func (c *Client) DeleteRelationshipTuple(ctx context.Context, tuples []openfga.TupleKeyWithoutCondition) (*ofgaclient.ClientWriteResponse, error) {
+// deleteRelationshipTuple deletes a relationship tuple in the openFGA store
+func (c *Client) deleteRelationshipTuple(ctx context.Context, tuples []openfga.TupleKeyWithoutCondition) (*ofgaclient.ClientWriteResponse, error) {
 	if len(tuples) == 0 {
 		return nil, nil
 	}
@@ -290,7 +290,7 @@ func (c *Client) DeleteAllObjectRelations(ctx context.Context, object string) er
 
 		allTuples := tuplesToDelete[i:end]
 
-		if _, err := c.DeleteRelationshipTuple(ctx, allTuples); err != nil {
+		if _, err := c.deleteRelationshipTuple(ctx, allTuples); err != nil {
 			return err
 		}
 	}

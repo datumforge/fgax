@@ -441,7 +441,7 @@ func TestDeleteRelationshipTuple(t *testing.T) {
 
 			mock_fga.DeleteAny(t, c, tc.errRes)
 
-			_, err := fc.DeleteRelationshipTuple(context.Background(), tuples)
+			_, err := fc.deleteRelationshipTuple(context.Background(), tuples)
 
 			if tc.errRes != "" {
 				assert.Error(t, err)

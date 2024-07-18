@@ -50,7 +50,7 @@ func TestCheckTuple(t *testing.T) {
 			mock_fga.CheckAny(t, c, tc.expectedRes)
 
 			// do request
-			valid, err := mc.CheckTuple(context.Background(), body)
+			valid, err := mc.checkTuple(context.Background(), body)
 
 			if tc.errRes != "" {
 				assert.Error(t, err)
