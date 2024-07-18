@@ -19,7 +19,7 @@ func (m *OrgMembershipMutation) CreateTuplesFromCreate(ctx context.Context) erro
 	role, _ := m.Role()
 
 	// get tuple key
-	req := TupleRequest{
+	req := fgax.TupleRequest{
 		SubjectID:   userID,
 		SubjectType: "user",
 		ObjectID:    objectID,
@@ -75,7 +75,7 @@ func (m *OrgMembershipMutation) CreateTuplesFromUpdate(ctx context.Context) erro
 			return err
 		}
 
-		req := TupleRequest{
+		req := fgax.TupleRequest{
 			SubjectID:   member.UserID,
 			SubjectType: "user",
 			ObjectID:    member.OrganizationID,
@@ -125,7 +125,7 @@ func (m *OrgMembershipMutation) CreateTuplesFromDelete(ctx context.Context) erro
 			return err
 		}
 
-		req := TupleRequest{
+		req := fgax.TupleRequest{
 			SubjectID:   members.UserID,
 			SubjectType: "user",
 			ObjectID:    members.OrganizationID,

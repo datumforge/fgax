@@ -24,7 +24,7 @@
                 role, _ := m.Role()
 
                 // get tuple key
-                req := TupleRequest{
+                req := fgax.TupleRequest{
                     SubjectID:   userID,
                     SubjectType: "user",
                     ObjectID: objectID,
@@ -88,7 +88,7 @@
                         return err
                     }
 
-                    req := TupleRequest{
+                    req := fgax.TupleRequest{
                         SubjectID:   member.UserID,
                         SubjectType: "user",
                         ObjectID:  member.{{ $objectType | ToUpperCamel }}ID,
@@ -146,7 +146,7 @@
                         return err
                     }
 
-                    req := TupleRequest{
+                    req := fgax.TupleRequest{
                         SubjectID:   members.UserID,
                         SubjectType: "user",
                         ObjectID:  members.{{ $objectType | ToUpperCamel }}ID,
