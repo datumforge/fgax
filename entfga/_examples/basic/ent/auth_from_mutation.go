@@ -19,7 +19,14 @@ func (m *OrgMembershipMutation) CreateTuplesFromCreate(ctx context.Context) erro
 	role, _ := m.Role()
 
 	// get tuple key
-	tuple := fgax.GetTupleKey(userID, "user", objectID, "organization", role.String())
+	req := TupleRequest{
+		SubjectID:   userID,
+		SubjectType: "user",
+		ObjectID:    objectID,
+		ObjectType:  "organization",
+		Relation:    role.String(),
+	}
+	tuple := fgax.GetTupleKey(req)
 
 	if _, err := m.Authz.WriteTupleKeys(ctx, []fgax.TupleKey{tuple}, nil); err != nil {
 		m.Logger.Errorw("failed to create relationship tuple", "error", err)
@@ -68,11 +75,19 @@ func (m *OrgMembershipMutation) CreateTuplesFromUpdate(ctx context.Context) erro
 			return err
 		}
 
-		d := fgax.GetTupleKey(member.UserID, "user", member.OrganizationID, "organization", oldRole.String())
+		req := TupleRequest{
+			SubjectID:   member.UserID,
+			SubjectType: "user",
+			ObjectID:    member.OrganizationID,
+			ObjectType:  "organization",
+			Relation:    oldRole.String(),
+		}
+		d := fgax.GetTupleKey(req)
 
 		deletes = append(deletes, d)
 
-		w := fgax.GetTupleKey(member.UserID, "user", member.OrganizationID, "organization", newRole.String())
+		req.Relation = newRole.String()
+		w := fgax.GetTupleKey(req)
 
 		writes = append(writes, w)
 
@@ -110,7 +125,14 @@ func (m *OrgMembershipMutation) CreateTuplesFromDelete(ctx context.Context) erro
 			return err
 		}
 
-		t := fgax.GetTupleKey(members.UserID, "user", members.OrganizationID, "organization", members.Role.String())
+		req := TupleRequest{
+			SubjectID:   members.UserID,
+			SubjectType: "user",
+			ObjectID:    members.OrganizationID,
+			ObjectType:  "organization",
+			Relation:    members.Role.String(),
+		}
+		t := fgax.GetTupleKey(req)
 
 		tuples = append(tuples, t)
 	}

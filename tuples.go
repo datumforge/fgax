@@ -32,17 +32,35 @@ const (
 )
 
 const (
-	// default page size open fga max is 100
+	// defaultPageSize is based on the openfga max of 100
 	defaultPageSize = 100
 	// maxWrites is the maximum number of Writes and Deletes supported by the OpenFGA transactional write api
 	// see https://openfga.dev/docs/interacting/transactional-writes for more details
 	maxWrites = 10
 )
 
+// TupleKey represents a relationship tuple in OpenFGA
 type TupleKey struct {
-	Subject  Entity
-	Object   Entity
+	// Subject is the entity that is the subject of the relationship, usually a user
+	Subject Entity
+	// Object is the entity that is the object of the relationship, (e.g. organization, project, document, etc)
+	Object Entity
+	// Relation is the relationship between the subject and object
 	Relation Relation `json:"relation"`
+}
+
+// TupleRequest is the fields needed to check a tuple in the FGA store
+type TupleRequest struct {
+	// ObjectID is the identifier of the object that the subject is related to
+	ObjectID string
+	// ObjectType is the type of object that the subject is related to
+	ObjectType string
+	// SubjectID is the identifier of the subject that is related to the object
+	SubjectID string
+	// SubjectType is the type of subject that is related to the object
+	SubjectType string
+	// Relation is the relationship between the subject and object
+	Relation string
 }
 
 func NewTupleKey() TupleKey { return TupleKey{} }
@@ -200,6 +218,7 @@ func (c *Client) DeleteRelationshipTuple(ctx context.Context, tuples []openfga.T
 	return resp, nil
 }
 
+// getAllTuples gets all the relationship tuples in the openFGA store
 func (c *Client) getAllTuples(ctx context.Context) ([]openfga.Tuple, error) {
 	var tuples []openfga.Tuple
 
@@ -210,6 +229,7 @@ func (c *Client) getAllTuples(ctx context.Context) ([]openfga.Tuple, error) {
 
 	notComplete := true
 
+	// paginate through all the tuples
 	for notComplete {
 		resp, err := c.Ofga.Read(ctx).Options(opts).Execute()
 		if err != nil {
@@ -230,6 +250,7 @@ func (c *Client) getAllTuples(ctx context.Context) ([]openfga.Tuple, error) {
 	return tuples, nil
 }
 
+// DeleteAllObjectRelations deletes all the relationship tuples for a given object
 func (c *Client) DeleteAllObjectRelations(ctx context.Context, object string) error {
 	// validate object is not empty
 	if object == "" {
@@ -260,6 +281,7 @@ func (c *Client) DeleteAllObjectRelations(ctx context.Context, object string) er
 		}
 	}
 
+	// delete the tuples in batches of 10, the max supported by the OpenFGA transactional write api
 	for i := 0; i < len(tuplesToDelete); i += maxWrites {
 		end := i + maxWrites
 		if end > len(tuplesToDelete) {
@@ -277,20 +299,20 @@ func (c *Client) DeleteAllObjectRelations(ctx context.Context, object string) er
 }
 
 // GetTupleKey creates a Tuple key with the provided subject, object, and role
-func GetTupleKey(subjectID, subjectType, objectID, objectType, relation string) TupleKey {
+func GetTupleKey(req TupleRequest) TupleKey {
 	sub := Entity{
-		Kind:       Kind(subjectType),
-		Identifier: subjectID,
+		Kind:       Kind(req.SubjectType),
+		Identifier: req.SubjectID,
 	}
 
 	object := Entity{
-		Kind:       Kind(objectType),
-		Identifier: objectID,
+		Kind:       Kind(req.ObjectType),
+		Identifier: req.ObjectID,
 	}
 
 	return TupleKey{
 		Subject:  sub,
 		Object:   object,
-		Relation: Relation(relation),
+		Relation: Relation(req.Relation),
 	}
 }

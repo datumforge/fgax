@@ -11,7 +11,7 @@ import (
 	mock_fga "github.com/datumforge/fgax/mockery"
 )
 
-func Test_EntityString(t *testing.T) {
+func TestEntityString(t *testing.T) {
 	memberRelation := Relation("member")
 
 	testCases := []struct {
@@ -40,7 +40,7 @@ func Test_EntityString(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		t.Run("Get "+tc.name, func(t *testing.T) {
+		t.Run(tc.name, func(t *testing.T) {
 			res := tc.entity.String()
 
 			// result should never be empty
@@ -50,7 +50,7 @@ func Test_EntityString(t *testing.T) {
 	}
 }
 
-func Test_ParseEntity(t *testing.T) {
+func TestParseEntity(t *testing.T) {
 	memberRelation := Relation("member")
 
 	testCases := []struct {
@@ -95,7 +95,7 @@ func Test_ParseEntity(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		t.Run("Get "+tc.name, func(t *testing.T) {
+		t.Run(tc.name, func(t *testing.T) {
 			res, err := ParseEntity(tc.entity)
 
 			// if we expect an error, check that first
@@ -114,7 +114,7 @@ func Test_ParseEntity(t *testing.T) {
 	}
 }
 
-func Test_tupleKeyToWriteRequest(t *testing.T) {
+func TestTupleKeyToWriteRequest(t *testing.T) {
 	testCases := []struct {
 		name             string
 		writes           []TupleKey
@@ -215,7 +215,7 @@ func Test_tupleKeyToWriteRequest(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		t.Run("Get "+tc.name, func(t *testing.T) {
+		t.Run(tc.name, func(t *testing.T) {
 			ctk := tupleKeyToWriteRequest(tc.writes)
 			assert.NotEmpty(t, ctk)
 
@@ -230,7 +230,7 @@ func Test_tupleKeyToWriteRequest(t *testing.T) {
 	}
 }
 
-func Test_tupleKeyToDeleteRequest(t *testing.T) {
+func TestTupleKeyToDeleteRequest(t *testing.T) {
 	testCases := []struct {
 		name             string
 		writes           []TupleKey
@@ -331,7 +331,7 @@ func Test_tupleKeyToDeleteRequest(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		t.Run("Get "+tc.name, func(t *testing.T) {
+		t.Run(tc.name, func(t *testing.T) {
 			ctk := tupleKeyToDeleteRequest(tc.writes)
 			assert.NotEmpty(t, ctk)
 
@@ -346,7 +346,7 @@ func Test_tupleKeyToDeleteRequest(t *testing.T) {
 	}
 }
 
-func Test_WriteTupleKeys(t *testing.T) {
+func TestWriteTupleKeys(t *testing.T) {
 	// setup mock client
 	c := mock_fga.NewMockSdkClient(t)
 
@@ -385,7 +385,7 @@ func Test_WriteTupleKeys(t *testing.T) {
 	}
 }
 
-func Test_DeleteRelationshipTuple(t *testing.T) {
+func TestDeleteRelationshipTuple(t *testing.T) {
 	// setup mock client
 	c := mock_fga.NewMockSdkClient(t)
 
@@ -456,28 +456,20 @@ func Test_DeleteRelationshipTuple(t *testing.T) {
 }
 
 func TestGetTupleKey(t *testing.T) {
-	type args struct {
-		subjectID   string
-		subjectType string
-		objectID    string
-		objectType  string
-		relation    string
-	}
-
 	tests := []struct {
 		name    string
-		args    args
+		req     TupleRequest
 		want    TupleKey
 		wantErr bool
 	}{
 		{
 			name: "happy path",
-			args: args{
-				subjectID:   "HIITSME",
-				subjectType: "user",
-				objectType:  "organization",
-				objectID:    "MIDNIGHTSAFTERNOON",
-				relation:    "member",
+			req: TupleRequest{
+				SubjectID:   "HIITSME",
+				SubjectType: "user",
+				ObjectType:  "organization",
+				ObjectID:    "MIDNIGHTSAFTERNOON",
+				Relation:    "member",
 			},
 			want: TupleKey{
 				Subject: Entity{
@@ -495,7 +487,7 @@ func TestGetTupleKey(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := GetTupleKey(tt.args.subjectID, tt.args.subjectType, tt.args.objectID, tt.args.objectType, tt.args.relation)
+			got := GetTupleKey(tt.req)
 			assert.Equal(t, tt.want, got)
 		})
 	}
