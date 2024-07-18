@@ -8,7 +8,9 @@ import (
 
 const (
 	// subject types
-	defaultSubjectType = "user"
+	defaultSubject = userSubject
+	userSubject    = "user"
+	serviceSubject = "service"
 
 	// object types
 	organizationObject = "organization"
@@ -37,7 +39,7 @@ func (c *Client) CheckAccess(ctx context.Context, ac AccessCheck) (bool, error) 
 	}
 
 	if ac.SubjectType == "" {
-		ac.SubjectType = defaultSubjectType
+		ac.SubjectType = defaultSubject
 	}
 
 	sub := Entity{
@@ -59,6 +61,22 @@ func (c *Client) CheckAccess(ctx context.Context, ac AccessCheck) (bool, error) 
 	}
 
 	return c.checkTuple(ctx, checkReq)
+}
+
+// CheckOrgReadAccess checks if the user has read access to the organization
+func (c *Client) CheckOrgReadAccess(ctx context.Context, ac AccessCheck) (bool, error) {
+	ac.ObjectType = organizationObject
+	ac.Relation = CanView // read access
+
+	return c.CheckAccess(ctx, ac)
+}
+
+// CheckOrgWriteAccess checks if the user has write access to the organization
+func (c *Client) CheckOrgWriteAccess(ctx context.Context, ac AccessCheck) (bool, error) {
+	ac.ObjectType = organizationObject
+	ac.Relation = CanEdit // write access
+
+	return c.CheckAccess(ctx, ac)
 }
 
 // CheckOrgAccess checks if the user has access to the organization with the given relation
@@ -94,7 +112,7 @@ func (c *Client) CheckSystemAdminRole(ctx context.Context, userID string) (bool,
 		ObjectID:    SystemAdminRole,
 		Relation:    RoleRelation,
 		SubjectID:   userID,
-		SubjectType: defaultSubjectType, // admin roles are always user roles, never an API token
+		SubjectType: userSubject, // admin roles are always user roles, never an API token
 	}
 
 	return c.CheckAccess(ctx, ac)

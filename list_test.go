@@ -285,7 +285,7 @@ func TestSetListRequestDefaults(t *testing.T) {
 			name: "set all",
 			req:  ListRequest{},
 			expectedReq: ListRequest{
-				SubjectType: defaultSubjectType,
+				SubjectType: defaultSubject,
 				Relation:    CanView,
 			},
 		},
@@ -295,7 +295,7 @@ func TestSetListRequestDefaults(t *testing.T) {
 				Relation: CanEdit,
 			},
 			expectedReq: ListRequest{
-				SubjectType: defaultSubjectType,
+				SubjectType: defaultSubject,
 				Relation:    CanEdit,
 			},
 		},

@@ -104,7 +104,7 @@ func (c *Client) listUsers(ctx context.Context, req ofgaclient.ClientListUsersRe
 func (r *ListRequest) setListRequestDefaults() {
 	// default to user type
 	if r.SubjectType == "" {
-		r.SubjectType = defaultSubjectType
+		r.SubjectType = defaultSubject
 	}
 
 	// default to view permissions
