@@ -37,7 +37,7 @@ func (c *Client) ListObjectsRequest(ctx context.Context, req ListRequest) (*ofga
 	listReq := ofgaclient.ClientListObjectsRequest{
 		User:     sub.String(),
 		Relation: req.Relation,
-		Type:     req.SubjectType,
+		Type:     req.ObjectType,
 	}
 
 	c.Logger.Debugw("listing objects", "relation", req.SubjectType, sub.String(), req.Relation, "type", req.ObjectType)
