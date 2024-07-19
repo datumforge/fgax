@@ -3,6 +3,7 @@ package fgax
 import (
 	"context"
 	"errors"
+	"fmt"
 	"testing"
 
 	openfga "github.com/openfga/go-sdk"
@@ -100,7 +101,7 @@ func TestListObjectsRequest(t *testing.T) {
 			userID:      "ulid-of-user",
 			objectType:  "organization",
 			expectedRes: nil,
-			errRes:      errors.New("boom"), //nolint:goerr113
+			errRes:      errors.New("boom"), //nolint:err113
 		},
 	}
 
@@ -119,12 +120,16 @@ func TestListObjectsRequest(t *testing.T) {
 			mock_fga.ListOnce(t, mc, body, tc.errRes)
 
 			// do request
+			req := ListRequest{
+				SubjectID:   tc.userID,
+				SubjectType: tc.subjectType,
+				ObjectType:  tc.objectType,
+				Relation:    tc.relation,
+			}
+
 			resp, err := c.ListObjectsRequest(
 				context.Background(),
-				tc.userID,
-				tc.subjectType,
-				tc.objectType,
-				tc.relation,
+				req,
 			)
 
 			if tc.errRes != nil {
@@ -181,7 +186,7 @@ func TestListUsersRequest(t *testing.T) {
 			objectType:  "organization",
 			objectID:    "ulid-of-object1",
 			expectedRes: nil,
-			errRes:      errors.New("boom"), //nolint:goerr113
+			errRes:      errors.New("boom"), //nolint:err113
 		},
 	}
 
@@ -195,12 +200,16 @@ func TestListUsersRequest(t *testing.T) {
 			// mock response for input
 			mock_fga.ListUsers(t, mc, users, tc.errRes)
 
+			req := ListRequest{
+				ObjectID:   tc.objectID,
+				ObjectType: tc.objectType,
+				Relation:   tc.relation,
+			}
+
 			// do request
 			resp, err := c.ListUserRequest(
 				context.Background(),
-				tc.objectID,
-				tc.objectType,
-				tc.relation,
+				req,
 			)
 
 			if tc.errRes != nil {
@@ -263,5 +272,157 @@ func TestGetEntityIDs(t *testing.T) {
 
 		require.NoError(t, err)
 		assert.Equal(t, tc.expectedIDs, ids)
+	}
+}
+
+func TestSetListRequestDefaults(t *testing.T) {
+	testCases := []struct {
+		name        string
+		req         ListRequest
+		expectedReq ListRequest
+	}{
+		{
+			name: "set all",
+			req:  ListRequest{},
+			expectedReq: ListRequest{
+				SubjectType: defaultSubject,
+				Relation:    CanView,
+			},
+		},
+		{
+			name: "set default subject type",
+			req: ListRequest{
+				Relation: CanEdit,
+			},
+			expectedReq: ListRequest{
+				SubjectType: defaultSubject,
+				Relation:    CanEdit,
+			},
+		},
+		{
+			name: "set default relation",
+			req: ListRequest{
+				SubjectType: "service",
+			},
+			expectedReq: ListRequest{
+				SubjectType: "service",
+				Relation:    CanView,
+			},
+		},
+		{
+			name: "set none",
+			req: ListRequest{
+				SubjectType: "service",
+				Relation:    CanEdit,
+			},
+			expectedReq: ListRequest{
+				SubjectType: "service",
+				Relation:    CanEdit,
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		// Call the function to set the default values
+		tc.req.setListRequestDefaults()
+
+		// Check if the default values are set correctly
+		assert.Equal(t, tc.expectedReq, tc.req)
+	}
+}
+func TestValidateListObjectsInput(t *testing.T) {
+	testCases := []struct {
+		name     string
+		req      ListRequest
+		expected error
+	}{
+		{
+			name: "valid input",
+			req: ListRequest{
+				SubjectID:   "user123",
+				SubjectType: "user",
+				Relation:    "can_view",
+			},
+			expected: nil,
+		},
+		{
+			name: "missing subject ID",
+			req: ListRequest{
+				SubjectType: "user",
+				Relation:    "can_view",
+			},
+			expected: fmt.Errorf("%w, subject_id", ErrMissingRequiredField),
+		},
+		{
+			name: "default subject type",
+			req: ListRequest{
+				SubjectID: "user123",
+				Relation:  "can_view",
+			},
+			expected: nil,
+		},
+		{
+			name: "default relation",
+			req: ListRequest{
+				SubjectID:   "user123",
+				SubjectType: "user",
+			},
+			expected: nil,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.req.validateListObjectsInput()
+			assert.Equal(t, tc.expected, err)
+		})
+	}
+}
+func TestValidateListUsersInput(t *testing.T) {
+	testCases := []struct {
+		name     string
+		req      ListRequest
+		expected error
+	}{
+		{
+			name: "valid input",
+			req: ListRequest{
+				ObjectID:   "object123",
+				ObjectType: "organization",
+				Relation:   "can_view",
+			},
+			expected: nil,
+		},
+		{
+			name: "missing object ID",
+			req: ListRequest{
+				ObjectType: "organization",
+				Relation:   "can_view",
+			},
+			expected: fmt.Errorf("%w, object_id", ErrMissingRequiredField),
+		},
+		{
+			name: "default object type",
+			req: ListRequest{
+				ObjectID: "object123",
+				Relation: "can_view",
+			},
+			expected: nil,
+		},
+		{
+			name: "default relation",
+			req: ListRequest{
+				ObjectID:   "object123",
+				ObjectType: "organization",
+			},
+			expected: nil,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.req.validateListUsersInput()
+			assert.Equal(t, tc.expected, err)
+		})
 	}
 }

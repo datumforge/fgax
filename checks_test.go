@@ -50,7 +50,7 @@ func TestCheckTuple(t *testing.T) {
 			mock_fga.CheckAny(t, c, tc.expectedRes)
 
 			// do request
-			valid, err := mc.CheckTuple(context.Background(), body)
+			valid, err := mc.checkTuple(context.Background(), body)
 
 			if tc.errRes != "" {
 				assert.Error(t, err)
@@ -79,7 +79,7 @@ func TestCheckAccess(t *testing.T) {
 				ObjectType: "organization",
 				ObjectID:   "ulid-of-org",
 				Relation:   "member",
-				UserID:     "ulid-of-member",
+				SubjectID:  "ulid-of-member",
 			},
 			expectedRes: true,
 			wantErr:     false,
@@ -91,7 +91,7 @@ func TestCheckAccess(t *testing.T) {
 				ObjectID:    "ulid-of-org",
 				SubjectType: "service",
 				Relation:    "member",
-				UserID:      "ulid-of-token",
+				SubjectID:   "ulid-of-token",
 			},
 			expectedRes: true,
 			wantErr:     false,
@@ -99,9 +99,9 @@ func TestCheckAccess(t *testing.T) {
 		{
 			name: "missing object type",
 			ac: AccessCheck{
-				ObjectID: "ulid-of-org",
-				Relation: "member",
-				UserID:   "ulid-of-member",
+				ObjectID:  "ulid-of-org",
+				Relation:  "member",
+				SubjectID: "ulid-of-member",
 			},
 			expectedRes: false,
 			wantErr:     true,
@@ -111,7 +111,7 @@ func TestCheckAccess(t *testing.T) {
 			ac: AccessCheck{
 				ObjectType: "organization",
 				ObjectID:   "ulid-of-org",
-				UserID:     "ulid-of-member",
+				SubjectID:  "ulid-of-member",
 			},
 			expectedRes: false,
 			wantErr:     true,
@@ -119,9 +119,9 @@ func TestCheckAccess(t *testing.T) {
 		{
 			name: "missing object type",
 			ac: AccessCheck{
-				Relation: "member",
-				ObjectID: "ulid-of-org",
-				UserID:   "ulid-of-member",
+				Relation:  "member",
+				ObjectID:  "ulid-of-org",
+				SubjectID: "ulid-of-member",
 			},
 			expectedRes: false,
 			wantErr:     true,

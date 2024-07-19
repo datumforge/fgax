@@ -6,30 +6,30 @@ import (
 	ofgaclient "github.com/openfga/go-sdk/client"
 )
 
+const (
+	// subject types
+	defaultSubject = userSubject
+	userSubject    = "user"
+	serviceSubject = "service"
+
+	// object types
+	organizationObject = "organization"
+	groupObject        = "group"
+	roleObject         = "role"
+)
+
 // AccessCheck is a struct to hold the information needed to check access
 type AccessCheck struct {
 	// ObjectType is the type of object being checked
 	ObjectType Kind
 	// ObjectID is the ID of the object being checked
 	ObjectID string
-	// Relation is the relationship being checked (e.g. "view", "edit", "delete")
-	Relation string
-	// UserID is the ID of the user making the request
-	UserID string
+	// SubjectID is the ID of the user making the request
+	SubjectID string
 	// SubjectType is the type of subject being checked
 	SubjectType string
-}
-
-// CheckTuple checks the openFGA store for provided relationship tuple
-func (c *Client) CheckTuple(ctx context.Context, check ofgaclient.ClientCheckRequest) (bool, error) {
-	data, err := c.Ofga.Check(ctx).Body(check).Execute()
-	if err != nil {
-		c.Logger.Errorw("error checking tuple", "tuple", check, "error", err.Error())
-
-		return false, err
-	}
-
-	return *data.Allowed, nil
+	// Relation is the relationship being checked (e.g. "view", "edit", "delete")
+	Relation string
 }
 
 // CheckAccess checks if the user has access to the object type with the given relation
@@ -39,12 +39,12 @@ func (c *Client) CheckAccess(ctx context.Context, ac AccessCheck) (bool, error) 
 	}
 
 	if ac.SubjectType == "" {
-		ac.SubjectType = "user"
+		ac.SubjectType = defaultSubject
 	}
 
 	sub := Entity{
 		Kind:       Kind(ac.SubjectType),
-		Identifier: ac.UserID,
+		Identifier: ac.SubjectID,
 	}
 
 	obj := Entity{
@@ -60,43 +60,59 @@ func (c *Client) CheckAccess(ctx context.Context, ac AccessCheck) (bool, error) 
 		Object:   obj.String(),
 	}
 
-	return c.CheckTuple(ctx, checkReq)
+	return c.checkTuple(ctx, checkReq)
+}
+
+// CheckOrgReadAccess checks if the user has read access to the organization
+func (c *Client) CheckOrgReadAccess(ctx context.Context, ac AccessCheck) (bool, error) {
+	ac.ObjectType = organizationObject
+	ac.Relation = CanView // read access
+
+	return c.CheckAccess(ctx, ac)
+}
+
+// CheckOrgWriteAccess checks if the user has write access to the organization
+func (c *Client) CheckOrgWriteAccess(ctx context.Context, ac AccessCheck) (bool, error) {
+	ac.ObjectType = organizationObject
+	ac.Relation = CanEdit // write access
+
+	return c.CheckAccess(ctx, ac)
 }
 
 // CheckOrgAccess checks if the user has access to the organization with the given relation
-func (c *Client) CheckOrgAccess(ctx context.Context, userID, subjectType, orgID, relation string) (bool, error) {
-	ac := AccessCheck{
-		ObjectType:  "organization",
-		ObjectID:    orgID,
-		Relation:    relation,
-		UserID:      userID,
-		SubjectType: subjectType,
-	}
+func (c *Client) CheckOrgAccess(ctx context.Context, ac AccessCheck) (bool, error) {
+	ac.ObjectType = organizationObject
 
 	return c.CheckAccess(ctx, ac)
 }
 
 // CheckGroupAccess checks if the user has access to the group with the given relation
-func (c *Client) CheckGroupAccess(ctx context.Context, userID, subjectType, groupID, relation string) (bool, error) {
-	ac := AccessCheck{
-		ObjectType:  "group",
-		ObjectID:    groupID,
-		Relation:    relation,
-		UserID:      userID,
-		SubjectType: subjectType,
-	}
+func (c *Client) CheckGroupAccess(ctx context.Context, ac AccessCheck) (bool, error) {
+	ac.ObjectType = groupObject
 
 	return c.CheckAccess(ctx, ac)
+}
+
+// checkTuple checks the openFGA store for provided relationship tuple
+func (c *Client) checkTuple(ctx context.Context, check ofgaclient.ClientCheckRequest) (bool, error) {
+	data, err := c.Ofga.Check(ctx).Body(check).Execute()
+	if err != nil {
+		c.Logger.Errorw("error checking tuple", "tuple", check, "error", err.Error())
+
+		return false, err
+	}
+
+	return *data.Allowed, nil
 }
 
 // CheckSystemAdminRole checks if the user has system admin access
 func (c *Client) CheckSystemAdminRole(ctx context.Context, userID string) (bool, error) {
 	ac := AccessCheck{
-		ObjectType:  "role",
+		ObjectType:  roleObject,
 		ObjectID:    SystemAdminRole,
 		Relation:    RoleRelation,
-		UserID:      userID,
-		SubjectType: "user", // admin roles are always user roles, never an API token
+		SubjectID:   userID,
+		SubjectType: userSubject, // admin roles are always user roles, never an API token
 	}
 
 	return c.CheckAccess(ctx, ac)
@@ -104,7 +120,7 @@ func (c *Client) CheckSystemAdminRole(ctx context.Context, userID string) (bool,
 
 // validateAccessCheck checks if the AccessCheck struct is valid
 func validateAccessCheck(ac AccessCheck) error {
-	if ac.UserID == "" {
+	if ac.SubjectID == "" {
 		return ErrInvalidAccessCheck
 	}
 

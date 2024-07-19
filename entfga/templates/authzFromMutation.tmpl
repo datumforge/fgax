@@ -24,7 +24,14 @@
                 role, _ := m.Role()
 
                 // get tuple key
-                tuple := fgax.GetTupleKey(userID, "user", objectID, "{{ $objectType | ToLower }}" , role.String())
+                req := fgax.TupleRequest{
+                    SubjectID:   userID,
+                    SubjectType: "user",
+                    ObjectID: objectID,
+                    ObjectType: "{{ $objectType | ToLower }}",
+                    Relation: role.String(),
+                }
+                tuple := fgax.GetTupleKey(req)
 
                 if _, err := m.Authz.WriteTupleKeys(ctx, []fgax.TupleKey{tuple}, nil); err != nil {
                     m.Logger.Errorw("failed to create relationship tuple", "error", err)
@@ -81,11 +88,19 @@
                         return err
                     }
 
-                    d := fgax.GetTupleKey(member.UserID, "user", member.{{ $objectType | ToUpperCamel }}ID, "{{ $objectType | ToLower }}", oldRole.String())
+                    req := fgax.TupleRequest{
+                        SubjectID:   member.UserID,
+                        SubjectType: "user",
+                        ObjectID:  member.{{ $objectType | ToUpperCamel }}ID,
+                        ObjectType: "{{ $objectType | ToLower }}",
+                        Relation: oldRole.String(),
+                    }
+                    d := fgax.GetTupleKey(req)
 
                     deletes = append(deletes, d)
 
-                    w := fgax.GetTupleKey(member.UserID, "user", member.{{ $objectType | ToUpperCamel }}ID, "{{ $objectType | ToLower }}", newRole.String())
+                    req.Relation = newRole.String()
+                    w := fgax.GetTupleKey(req)
 
                     writes = append(writes, w)
 
@@ -131,7 +146,14 @@
                         return err
                     }
 
-                    t := fgax.GetTupleKey(members.UserID, "user", members.{{ $objectType | ToUpperCamel }}ID, "{{ $objectType | ToLower }}", members.Role.String())
+                    req := fgax.TupleRequest{
+                        SubjectID:   members.UserID,
+                        SubjectType: "user",
+                        ObjectID:  members.{{ $objectType | ToUpperCamel }}ID,
+                        ObjectType: "{{ $objectType | ToLower }}",
+                        Relation: members.Role.String(),
+                    }
+                    t := fgax.GetTupleKey(req)
 
                     tuples = append(tuples, t)
                 }

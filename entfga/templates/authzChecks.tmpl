@@ -75,7 +75,7 @@ import (
                 }
 
                 var err error
-                ac.UserID, err = auth.GetUserIDFromContext(ctx)
+                ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
                 if err != nil {
                     return err
                 }
@@ -175,7 +175,7 @@ import (
             m.Logger.Debugw("checking mutation access")
 
             var err error
-            ac.UserID, err = auth.GetUserIDFromContext(ctx)
+            ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
             if err != nil {
                 return err
             }
@@ -215,7 +215,7 @@ import (
             m.Logger.Debugw("checking mutation access")
 
             var err error
-            ac.UserID, err = auth.GetUserIDFromContext(ctx)
+            ac.SubjectID, err = auth.GetUserIDFromContext(ctx)
             if err != nil {
                 return err
             }

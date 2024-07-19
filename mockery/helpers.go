@@ -190,7 +190,7 @@ func DeleteAny(t *testing.T, c *MockSdkClient, errMsg string) {
 
 	var err error
 	if errMsg != "" {
-		err = errors.New(errMsg) // nolint:goerr113
+		err = errors.New(errMsg) // nolint:err113
 	}
 
 	di.EXPECT().Execute().Return(&ofgaclient.ClientWriteResponse{}, err)
