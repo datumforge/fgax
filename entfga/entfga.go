@@ -16,6 +16,7 @@ var (
 const (
 	defaultGeneratedPkg  = "generated"
 	defaultGeneratedPath = "internal/ent/generated"
+	defaultSchemaPath    = "./internal/ent/schema"
 )
 
 type Config struct {
@@ -49,6 +50,7 @@ func New(opts ...ConfigOption) *AuthzExtension {
 			SoftDeletes:   false,
 			GeneratedPkg:  defaultGeneratedPkg,
 			GeneratedPath: defaultGeneratedPath,
+			SchemaPath:    defaultSchemaPath,
 		},
 	}
 

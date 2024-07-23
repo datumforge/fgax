@@ -27,6 +27,16 @@ func main() {
 		log.Fatalf("creating entgql extension: %v", err)
 	}
 
+	entfgaExt := entfga.New(
+		entfga.WithSchemaPath("./schema"),
+		entfga.WithGeneratedPath("."),
+		entfga.WithGeneratedPkg("ent"),
+	)
+
+	if err := entfgaExt.GenerateAuthzChecks(); err != nil {
+		log.Fatalf("generating authz checks: %v", err)
+	}
+
 	if err := entc.Generate("./schema",
 		&gen.Config{
 			Features: []gen.Feature{gen.FeaturePrivacy},
@@ -41,7 +51,7 @@ func main() {
 		),
 		entc.Extensions(
 			gqlExt,
-			entfga.NewFGAExtension(),
+			entfgaExt,
 		),
 	); err != nil {
 		log.Fatal("running ent codegen:", err)
