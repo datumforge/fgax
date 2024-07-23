@@ -31,7 +31,7 @@ For example, you can easily check for `Read` access of an organization using
 		return false
 	}
 
-    // create access check
+	// create access check
 	req := fgax.AccessCheck{
 		SubjectID:   "user-id",
 		SubjectType: "user",
