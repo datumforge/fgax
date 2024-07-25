@@ -7,7 +7,7 @@ go 1.22.5
 
 require (
 	entgo.io/contrib v0.6.0
-	entgo.io/ent v0.13.2-0.20240717044502-34158f2c129b
+	entgo.io/ent 20f9fba3e667
 	github.com/99designs/gqlgen v0.17.49
 	github.com/datumforge/datum v0.7.5
 	github.com/datumforge/fgax v0.4.0
