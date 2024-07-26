@@ -7,10 +7,10 @@ go 1.22.5
 
 require (
 	entgo.io/contrib v0.6.0
-	entgo.io/ent 20f9fba3e667
+	entgo.io/ent v0.13.2-0.20240717044502-34158f2c129b
 	github.com/99designs/gqlgen v0.17.49
 	github.com/datumforge/datum v0.7.5
-	github.com/datumforge/fgax v0.4.0
+	github.com/datumforge/fgax v0.5.0
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/vektah/gqlparser/v2 v2.5.16
 	go.uber.org/zap v1.27.0
