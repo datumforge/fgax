@@ -7,10 +7,10 @@ go 1.22.5
 
 require (
 	entgo.io/contrib v0.6.0
-	entgo.io/ent 20f9fba3e667
+	entgo.io/ent v0.13.2-0.20240717044502-34158f2c129b
 	github.com/99designs/gqlgen v0.17.49
 	github.com/datumforge/datum v0.7.5
-	github.com/datumforge/fgax v0.5.0
+	github.com/datumforge/fgax v0.5.1
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/vektah/gqlparser/v2 v2.5.16
 	go.uber.org/zap v1.27.0
@@ -58,10 +58,10 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/natefinch/wrap v0.2.0 // indirect
 	github.com/oklog/ulid/v2 v2.1.0 // indirect
-	github.com/openfga/api/proto v0.0.0-20240620215129-f5a955a47ae4 // indirect
+	github.com/openfga/api/proto v0.0.0-20240723155248-7e5be7b65c27 // indirect
 	github.com/openfga/go-sdk v0.5.0 // indirect
 	github.com/openfga/language/pkg/go v0.0.0-20240611203201-b6bbf9c4bb3a // indirect
-	github.com/openfga/openfga v1.5.6 // indirect
+	github.com/openfga/openfga v1.5.7 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
