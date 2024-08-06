@@ -9,7 +9,7 @@ require (
 	entgo.io/contrib v0.6.0
 	entgo.io/ent v0.14.0
 	github.com/99designs/gqlgen v0.17.49
-	github.com/datumforge/datum v0.7.6
+	github.com/datumforge/datum v0.7.7
 	github.com/datumforge/fgax v0.5.1
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/vektah/gqlparser/v2 v2.5.16
@@ -45,7 +45,7 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.20.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/hashicorp/hcl/v2 v2.20.1 // indirect
+	github.com/hashicorp/hcl/v2 v2.21.0 // indirect
 	github.com/karlseguin/ccache/v3 v3.0.5 // indirect
 	github.com/lestrrat-go/blackmagic v1.0.2 // indirect
 	github.com/lestrrat-go/httpcc v1.0.1 // indirect
@@ -100,14 +100,14 @@ require (
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 // indirect
 	golang.org/x/mod v0.19.0 // indirect
 	golang.org/x/net v0.27.0 // indirect
-	golang.org/x/oauth2 v0.21.0 // indirect
+	golang.org/x/oauth2 v0.22.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect
 	golang.org/x/sys v0.22.0 // indirect
 	golang.org/x/text v0.16.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	golang.org/x/tools v0.23.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20240722135656-d784300faade // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240722135656-d784300faade // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20240725223205-93522f1f2a9f // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240730163845-b1a4ccb954bf // indirect
 	google.golang.org/grpc v1.65.0 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
