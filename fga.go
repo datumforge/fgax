@@ -35,6 +35,24 @@ type Config struct {
 	CreateNewModel bool `json:"createNewModel" koanf:"createNewModel" jsonschema:"description=force create a new model, even if one already exists" default:"false"`
 	// ModelFile is the path to the model file
 	ModelFile string `json:"modelFile" koanf:"modelFile" jsonschema:"description=path to the fga model file" default:"fga/model/datum.fga"`
+	// Credentials for the client
+	Credentials Credentials `json:"credentials" koanf:"credentials" jsonschema:"description=credentials for the openFGA client"`
+}
+
+// Credentials for the openFGA client
+type Credentials struct {
+	// APIToken is the token to use for the client, required if using API token authentication
+	APIToken string `json:"apiToken" koanf:"apiToken" jsonschema:"description=api token for the openFGA client, required if using pre-shared key authentication"`
+	// ClientID is the client ID to use for the client, required if using client credentials
+	ClientID string `json:"clientId" koanf:"clientId" jsonschema:"description=client id for the openFGA client, required if using client credentials authentication"`
+	// ClientSecret is the client secret to use for the client, required if using client credentials
+	ClientSecret string `json:"clientSecret" koanf:"clientSecret" jsonschema:"description=client secret for the openFGA client, required if using client credentials authentication"`
+	// Audience is the audience to use for the client, required if using client credentials
+	Audience string `json:"audience" koanf:"audience" jsonschema:"description=audience for the openFGA client"`
+	// Issuer is the issuer to use for the client, required if using client credentials
+	Issuer string `json:"issuer" koanf:"issuer" jsonschema:"description=issuer for the openFGA client"`
+	// Scopes is the scopes to use for the client, required if using client credentials
+	Scopes string `json:"scopes" koanf:"scopes" jsonschema:"description=scopes for the openFGA client"`
 }
 
 // Option is a functional configuration option for openFGA client
@@ -93,6 +111,34 @@ func WithAuthorizationModelID(authModelID string) Option {
 	}
 }
 
+// WithAPITokenCredentials sets the credentials for the client with an API token
+func WithAPITokenCredentials(token string) Option {
+	return func(c *Client) {
+		c.Config.Credentials = &credentials.Credentials{
+			Method: credentials.CredentialsMethodApiToken,
+			Config: &credentials.Config{
+				ApiToken: token,
+			},
+		}
+	}
+}
+
+// WithClientCredentials sets the client credentials for the client with a client ID and secret
+func WithClientCredentials(clientID, clientSecret, aud, issuer, scopes string) Option {
+	return func(c *Client) {
+		c.Config.Credentials = &credentials.Credentials{
+			Method: credentials.CredentialsMethodClientCredentials,
+			Config: &credentials.Config{
+				ClientCredentialsClientId:       clientID,
+				ClientCredentialsClientSecret:   clientSecret,
+				ClientCredentialsApiAudience:    aud,
+				ClientCredentialsApiTokenIssuer: issuer,
+				ClientCredentialsScopes:         scopes,
+			},
+		}
+	}
+}
+
 // WithToken sets the client credentials
 func WithToken(token string) Option {
 	return func(c *Client) {
@@ -107,12 +153,30 @@ func WithToken(token string) Option {
 
 // CreateFGAClientWithStore returns a Client with a store and model configured
 func CreateFGAClientWithStore(ctx context.Context, c Config, l *zap.SugaredLogger) (*Client, error) {
+	// initialize options with logger
+	opts := []Option{
+		WithLogger(l),
+	}
+
+	// set credentials if provided
+	if c.Credentials.APIToken != "" {
+		opts = append(opts, WithAPITokenCredentials(c.Credentials.APIToken))
+	} else if c.Credentials.ClientID != "" && c.Credentials.ClientSecret != "" {
+		opts = append(opts, WithClientCredentials(
+			c.Credentials.ClientID,
+			c.Credentials.ClientSecret,
+			c.Credentials.Audience,
+			c.Credentials.Issuer,
+			c.Credentials.Scopes,
+		))
+	}
+
 	// create store if an ID was not configured
 	if c.StoreID == "" {
 		// Create new store
 		fgaClient, err := NewClient(
 			c.HostURL,
-			WithLogger(l),
+			opts...,
 		)
 		if err != nil {
 			return nil, err
@@ -124,13 +188,15 @@ func CreateFGAClientWithStore(ctx context.Context, c Config, l *zap.SugaredLogge
 		}
 	}
 
+	// add store ID to the options
+	opts = append(opts, WithStoreID(c.StoreID))
+
 	// create model if ID was not configured
 	if c.ModelID == "" {
 		// create fga client with store ID
 		fgaClient, err := NewClient(
 			c.HostURL,
-			WithStoreID(c.StoreID),
-			WithLogger(l),
+			opts...,
 		)
 		if err != nil {
 			return nil, err
@@ -146,12 +212,15 @@ func CreateFGAClientWithStore(ctx context.Context, c Config, l *zap.SugaredLogge
 		c.ModelID = modelID
 	}
 
+	// add model ID to the options
+	opts = append(opts,
+		WithAuthorizationModelID(c.ModelID),
+	)
+
 	// create fga client with store ID
 	return NewClient(
 		c.HostURL,
-		WithStoreID(c.StoreID),
-		WithAuthorizationModelID(c.ModelID),
-		WithLogger(l),
+		opts...,
 	)
 }
 
