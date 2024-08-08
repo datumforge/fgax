@@ -157,14 +157,14 @@ func (c *Client) checkTuple(ctx context.Context, check ofgaclient.ClientCheckReq
 // batchCheckTuples checks the openFGA store for provided relationship tuples and returns the allowed relations
 func (c *Client) batchCheckTuples(ctx context.Context, checks []ofgaclient.ClientCheckRequest) ([]string, error) {
 	res, err := c.Ofga.BatchCheck(ctx).Body(checks).Execute()
-	if err != nil {
+	if err != nil || res == nil {
 		return nil, err
 	}
 
 	relations := []string{}
 
 	for _, r := range *res {
-		if *r.Allowed {
+		if r.Allowed != nil && *r.Allowed {
 			relations = append(relations, r.Request.Relation)
 		}
 	}
