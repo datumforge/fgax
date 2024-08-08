@@ -42,7 +42,7 @@ type ListAccess struct {
 	SubjectID string
 	// SubjectType is the type of subject being checked
 	SubjectType string
-	// Relations is the relationship being checked (e.g. "view", "edit", "delete")
+	// Relations is the relationship being checked (e.g. "can_view", "can_edit", "can_delete")
 	Relations []string
 }
 
@@ -154,7 +154,7 @@ func (c *Client) checkTuple(ctx context.Context, check ofgaclient.ClientCheckReq
 	return *data.Allowed, nil
 }
 
-// checkTuple checks the openFGA store for provided relationship tuple
+// batchCheckTuples checks the openFGA store for provided relationship tuples and returns the allowed relations
 func (c *Client) batchCheckTuples(ctx context.Context, checks []ofgaclient.ClientCheckRequest) ([]string, error) {
 	res, err := c.Ofga.BatchCheck(ctx).Body(checks).Execute()
 	if err != nil {
@@ -167,6 +167,7 @@ func (c *Client) batchCheckTuples(ctx context.Context, checks []ofgaclient.Clien
 			relations = append(relations, r.Request.Relation)
 		}
 	}
+
 	return relations, nil
 }
 
