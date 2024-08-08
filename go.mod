@@ -8,7 +8,7 @@ require (
 	github.com/Yamashou/gqlgenc v0.23.2
 	github.com/openfga/go-sdk v0.5.0
 	github.com/openfga/language/pkg/go v0.0.0-20240611203201-b6bbf9c4bb3a
-	github.com/openfga/openfga v1.5.7
+	github.com/openfga/openfga v1.5.8
 	github.com/pkg/errors v0.9.1
 	github.com/samber/lo v1.46.0
 	github.com/stoewer/go-strcase v1.3.0
@@ -49,7 +49,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/natefinch/wrap v0.2.0 // indirect
 	github.com/oklog/ulid/v2 v2.1.0 // indirect
-	github.com/openfga/api/proto v0.0.0-20240723155248-7e5be7b65c27 // indirect
+	github.com/openfga/api/proto v0.0.0-20240807201305-c96ec773cae9 // indirect
 	github.com/pelletier/go-toml/v2 v2.1.1 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/prometheus/client_golang v1.19.0 // indirect
