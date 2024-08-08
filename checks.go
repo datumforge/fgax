@@ -162,6 +162,7 @@ func (c *Client) batchCheckTuples(ctx context.Context, checks []ofgaclient.Clien
 	}
 
 	relations := []string{}
+
 	for _, r := range *res {
 		if *r.Allowed {
 			relations = append(relations, r.Request.Relation)
