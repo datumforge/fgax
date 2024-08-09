@@ -2,6 +2,7 @@ package client
 
 import (
 	"errors"
+	"slices"
 	"testing"
 
 	openfga "github.com/openfga/go-sdk"
@@ -181,6 +182,38 @@ func CheckAny(t *testing.T, c *MockSdkClient, allowed bool) {
 	cr.EXPECT().Body(mock.Anything).Return(cr)
 
 	c.EXPECT().Check(mock.Anything).Return(cr)
+}
+
+// CheckAny mocks a check request for any times in a test
+func BatchCheck(t *testing.T, c *MockSdkClient, list []string, allowed []string) {
+	batch := NewMockSdkClientBatchCheckRequestInterface(t)
+
+	resp := []ofgaclient.ClientBatchCheckSingleResponse{}
+
+	for _, relation := range list {
+		result := false
+		if slices.Contains(allowed, relation) {
+			result = true
+		}
+
+		ccr := ofgaclient.ClientCheckResponse{}
+		ccr.SetAllowed(result)
+
+		checkResp := ofgaclient.ClientBatchCheckSingleResponse{
+			Request: ofgaclient.ClientCheckRequest{
+				Relation: relation,
+			},
+			ClientCheckResponse: ccr,
+		}
+
+		resp = append(resp, checkResp)
+	}
+
+	batch.EXPECT().Execute().Return(&resp, nil)
+
+	batch.EXPECT().Body(mock.Anything).Return(batch)
+
+	c.EXPECT().BatchCheck(mock.Anything).Return(batch)
 }
 
 // DeleteAny creates mock delete responses based on the mock FGA client for

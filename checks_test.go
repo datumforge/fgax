@@ -162,3 +162,75 @@ func TestCheckAccess(t *testing.T) {
 		})
 	}
 }
+
+func TestListRelations(t *testing.T) {
+	tests := []struct {
+		name        string
+		check       ListAccess
+		expectedRes []string
+		wantErr     bool
+	}{
+		{
+			name: "happy path",
+			check: ListAccess{
+				ObjectType: "organization",
+				ObjectID:   "ulid-of-org",
+				Relations:  []string{"can_delete", "can_view", "can_read"},
+				SubjectID:  "ulid-of-member",
+			},
+			expectedRes: []string{"can_view", "can_read"},
+			wantErr:     false,
+		},
+		{
+			name: "missing object type",
+			check: ListAccess{
+				ObjectID:  "ulid-of-org",
+				Relations: []string{"can_delete", "can_view", "can_read"},
+				SubjectID: "ulid-of-member",
+			},
+			wantErr: true,
+		},
+		{
+			name: "missing object id",
+			check: ListAccess{
+				ObjectType: "organization",
+				Relations:  []string{"can_delete", "can_view", "can_read"},
+				SubjectID:  "ulid-of-member",
+			},
+			wantErr: true,
+		},
+		{
+			name: "missing subject id",
+			check: ListAccess{
+				ObjectType: "organization",
+				ObjectID:   "ulid-of-org",
+				Relations:  []string{"can_delete", "can_view", "can_read"},
+			},
+			wantErr: true,
+		},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			// setup mock client
+			c := mock_fga.NewMockSdkClient(t)
+			mc := NewMockFGAClient(t, c)
+
+			if !tc.wantErr {
+				mock_fga.BatchCheck(t, c, tc.check.Relations, tc.expectedRes)
+			}
+
+			// do request
+			valid, err := mc.ListRelations(context.Background(), tc.check)
+
+			if tc.wantErr {
+				assert.Error(t, err)
+				assert.Equal(t, tc.expectedRes, valid)
+
+				return
+			}
+
+			assert.NoError(t, err)
+			assert.Equal(t, tc.expectedRes, valid)
+		})
+	}
+}

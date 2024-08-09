@@ -32,6 +32,20 @@ type AccessCheck struct {
 	Relation string
 }
 
+// ListAccess is a struct to hold the information needed to list all relations
+type ListAccess struct {
+	// ObjectType is the type of object being checked
+	ObjectType Kind
+	// ObjectID is the ID of the object being checked
+	ObjectID string
+	// SubjectID is the ID of the user making the request
+	SubjectID string
+	// SubjectType is the type of subject being checked
+	SubjectType string
+	// Relations is the relationship being checked (e.g. "can_view", "can_edit", "can_delete")
+	Relations []string
+}
+
 // CheckAccess checks if the user has access to the object type with the given relation
 func (c *Client) CheckAccess(ctx context.Context, ac AccessCheck) (bool, error) {
 	if err := validateAccessCheck(ac); err != nil {
@@ -61,6 +75,41 @@ func (c *Client) CheckAccess(ctx context.Context, ac AccessCheck) (bool, error) 
 	}
 
 	return c.checkTuple(ctx, checkReq)
+}
+
+// ListRelations returns the list of relations the user has with the object
+func (c *Client) ListRelations(ctx context.Context, ac ListAccess) ([]string, error) {
+	if err := validateListAccess(ac); err != nil {
+		return nil, err
+	}
+
+	if ac.SubjectType == "" {
+		ac.SubjectType = defaultSubject
+	}
+
+	sub := Entity{
+		Kind:       Kind(ac.SubjectType),
+		Identifier: ac.SubjectID,
+	}
+
+	obj := Entity{
+		Kind:       ac.ObjectType,
+		Identifier: ac.ObjectID,
+	}
+
+	checks := []ofgaclient.ClientCheckRequest{}
+
+	for _, rel := range ac.Relations {
+		check := ofgaclient.ClientCheckRequest{
+			User:     sub.String(),
+			Relation: rel,
+			Object:   obj.String(),
+		}
+
+		checks = append(checks, check)
+	}
+
+	return c.batchCheckTuples(ctx, checks)
 }
 
 // CheckOrgReadAccess checks if the user has read access to the organization
@@ -105,6 +154,24 @@ func (c *Client) checkTuple(ctx context.Context, check ofgaclient.ClientCheckReq
 	return *data.Allowed, nil
 }
 
+// batchCheckTuples checks the openFGA store for provided relationship tuples and returns the allowed relations
+func (c *Client) batchCheckTuples(ctx context.Context, checks []ofgaclient.ClientCheckRequest) ([]string, error) {
+	res, err := c.Ofga.BatchCheck(ctx).Body(checks).Execute()
+	if err != nil || res == nil {
+		return nil, err
+	}
+
+	relations := []string{}
+
+	for _, r := range *res {
+		if r.Allowed != nil && *r.Allowed {
+			relations = append(relations, r.Request.Relation)
+		}
+	}
+
+	return relations, nil
+}
+
 // CheckSystemAdminRole checks if the user has system admin access
 func (c *Client) CheckSystemAdminRole(ctx context.Context, userID string) (bool, error) {
 	ac := AccessCheck{
@@ -133,6 +200,23 @@ func validateAccessCheck(ac AccessCheck) error {
 	}
 
 	if ac.Relation == "" {
+		return ErrInvalidAccessCheck
+	}
+
+	return nil
+}
+
+// validateListAccess checks if the ListAccess struct is valid
+func validateListAccess(ac ListAccess) error {
+	if ac.SubjectID == "" {
+		return ErrInvalidAccessCheck
+	}
+
+	if ac.ObjectType == "" {
+		return ErrInvalidAccessCheck
+	}
+
+	if ac.ObjectID == "" {
 		return ErrInvalidAccessCheck
 	}
 
